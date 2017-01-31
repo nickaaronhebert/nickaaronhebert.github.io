@@ -7,10 +7,9 @@
     //For Loops
     //Happy Path
     var cars = ["BMW", "Volvo", "Saab", "Ford", "Fiat", "Audi"];            
-    var text = "";
     var i;
     for (i = 0; i < cars.length; i++) {
-        text += cars[i] + "<br>";
+        console.log(cars[i]);
     }
     //Result - Will print out each car from the cars array. 
 
@@ -18,7 +17,7 @@
     //Reason: Programming beginners will think that the first element in an array will be element 1. Hence they will put i = 1. 
     try {
       for (i = 1; i < cars.length; i++) {
-          text += cars[i] + "<br>";
+          console.log(cars[i]);
       }
     }
     catch(err) {
