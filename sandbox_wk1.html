@@ -2,7 +2,34 @@
 <html>
 <head>
   <script type="text/javascript">
-    console.log("Hello");
+    // Loops, Conditional Statements, Functions, Variables, Parameters, Arrays, Associative Arrays  
+
+    //For Loops
+    //Happy Path
+    var cars = ["BMW", "Volvo", "Saab", "Ford", "Fiat", "Audi"];            
+    var text = "";
+    var i;
+    for (i = 0; i < cars.length; i++) {
+        text += cars[i] + "<br>";
+    }
+    //Result - Will print out each car from the cars array. 
+
+    //Nasty Path
+    //Reason: Programming beginners will think that the first element in an array will be element 1. Hence they will put i = 1. 
+    try {
+      for (i = 1; i < cars.length; i++) {
+          text += cars[i] + "<br>";
+      }
+    }
+    catch(err) {
+       console.log(err.message);
+    }
+    //Result: The first element in the list will not be processed. 
+
+
+
+
+  
   </script>
   
 </head>
@@ -11,7 +38,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-6 companyNameOrLogo">
-          Hello
+          Nick Hebert's Sandbox Week 1
         </div>
       </div>
     </div>    
