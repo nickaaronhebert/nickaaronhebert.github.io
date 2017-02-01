@@ -106,11 +106,18 @@
     }
     //Result: The function will fail because you cannot multiply a string by an integer. 
 
-    //Happy Path
-    //Reason: Sometimes you want a function to run as soon as the page loads. Such as loading data from a server or mapping data into the view. 
-    function () {
-      console.log("Say hello");             
+    //Nasty Path
+    //Reason: Function needs a name.
+
+    try {
+      function () {
+        console.log("Say hello");             
+      }
     }
+    catch(err) {
+       console.log(err.message);
+    }
+    
     //Result - The function executes properly.
 
     //Nasty Path
