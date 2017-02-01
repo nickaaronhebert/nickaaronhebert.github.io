@@ -107,11 +107,12 @@
     //Result: The function will fail because you cannot multiply a string by an integer. 
 
     //Nasty Path
-    //Reason: Function needs a name.
+    //Reason: Function call needs to match the function definition.
     try {
-      function () {
+      function xyz() {
         console.log("Say hello");             
       }
+      xzy();
     }
     catch(err) {
        console.log(err.message);
