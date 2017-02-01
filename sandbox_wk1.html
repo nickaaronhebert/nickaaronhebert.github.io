@@ -23,7 +23,219 @@
     catch(err) {
        console.log(err.message);
     }
-    //Result: The first element in the list will not be processed. 
+    //Result: The first element in the list will not be processed.
+
+    //While Loops
+    //Happy Path
+    var cars = ["BMW", "Volvo", "Saab", "Ford", "Fiat", "Audi"];            
+    var i = 0;
+    while (i < cars.length) {
+        console.log(cars[i]);
+        i++;
+    }
+    //Result - Will print out each car from the cars array. 
+
+    //Nasty Path
+    //Reason: Programming beginners will use a while loop instead of a for loop for this given situation. 
+    var cars = ["BMW", "Volvo", "Saab", "Ford", "Fiat", "Audi"];            
+    var i = 0;
+    while (i < cars.length) {
+        console.log(cars[i]);
+        i++;
+    }
+    //Result: The list will print out perfectly. But this is not the ideal usage. 
+
+    //Nasty Path
+    //Reason: i will be incremented before it is evaluated. 
+    var cars = ["BMW", "Volvo", "Saab", "Ford", "Fiat", "Audi"];            
+    var i = 0;
+    try {
+      while (i < cars.length) {
+        i++;
+        console.log(cars[i]);
+        
+      }
+    }
+    catch(err) {
+       console.log(err.message);
+    }
+    //Result: The first element will be bypassed.
+
+    //Conditional Statements
+    //Happy Path
+    if (i == 2) {
+        console.log("Success!")l
+    } else { 
+        console.log("Not a success Success!");
+    }
+    //Result - Will print out each car from the cars array. 
+
+    //Nasty Path
+    //Reason: Programmers will accidentally use one equal sign instead of two. 
+    if (i = 2) {
+        console.log("Success!")l
+    } else { 
+        console.log("Not a success Success!");
+    }
+    //Result: This is an assignment which will cause the statement to evaluate to true, which is not what we want to happen. 
+
+    //Nasty Path
+    //Reason: Many beginning programmers will think that an else statement will have a statement attached to it. 
+    var a, b;
+    try {
+      if ( a < b) {
+          do something here;
+      }
+      else if (a > b) {
+          do this other thing;
+      }
+      else (a == b) {
+          do something different;
+      }
+    }
+    catch(err) {
+       console.log(err.message);
+    }
+    //Result: The function will not run.
+
+    //Functions
+    //Happy Path
+    function myFunction(p1, p2) {
+      return p1 * p2;              
+    }
+    myFunction(4,6);
+    //Result - The function returns the product of p1 and p2 
+
+    //Nasty Path
+    //Reason: The parameters are data type mismatches.
+    try {
+      function myFunction(p1, p2) {
+        return p1 * p2;              
+      }
+      myFunction("q",6);
+    }
+    catch(err) {
+       console.log(err.message);
+    }
+    //Result: The function will fail because you cannot multiply a string by an integer. 
+
+    //Happy Path
+    //Reason: Sometimes you want a function to run as soon as the page loads. Such as loading data from a server or mapping data into the view. 
+    function {
+      console.log("Say hello");             
+    }
+    //Result - The function executes properly.
+
+    //Nasty Path
+    //Reason: If the programmer is trying to get this function to run as soon as the page loads, then that will not be achieved unless the programmer calls the function in the script tag after the function definition.
+    try {
+      myFunction(1,2);
+      function myFunction(p1, p2) {
+        return p1 * p2;              
+      }
+    }
+    catch(err) {
+       console.log(err.message);
+    }
+    //Result: The function will fail because need to put the function call after the function definition in Javascript. 
+
+    //Variables
+    //Happy Path
+    var x = 5;
+    var y = 6;
+    var z = x + y; 
+    //Result: z will equal 11
+
+    //Nasty Path
+    //Reason: Trying to add string vars error.
+    var n = "2";
+    var q = "4";
+    var t = n + q;
+    console.log("T is: " + t);
+    //Result: T is 24
+    //If you add anything in strings, it will concatenate it. The user likely wanted 6, not 24. 
+
+    //Nasty Path
+    //Reason: The variable cars is out of scope when the user tries to print it out.           
+    var i = 0;
+    try {
+      if (i == 0) {
+        var cars = "Buick Honda Ford";
+      }
+      console.log(cars);
+    }
+    catch(err) {
+       console.log(err.message);
+    }
+    //Result: The program will not be able to find the cars variable becasue it has been deleted from the stack already.
+
+    //Parameters
+
+    //Happy Path
+    //Reason: The parameter count matches and the parameter types are matching.  
+    function myFunction(p1, p2) {
+      return p1 * p2;              
+    }
+    myFunction(5,6);
+    //Result: Function runs properly
+
+    //Nasty Path
+    //Reason: The parameter count is incorrect.
+    try {
+      function myFunction(p1, p2) {
+        return p1 * p2;              
+      }
+      myFunction(6);
+    }
+    catch(err) {
+       console.log(err.message);
+    }
+    //Result: The function will fail because you need to supply the correct number of function parameters. 
+
+    //Arrays
+    //Happy Path
+    //Reason: An array starts at index 0.
+    var colorArray = ["blue", "red", "orange"];
+    var currColor = colorArray[0];
+    //Result: The currColor is blue
+
+    //Nasty Path
+    //Reason: Some beginning programmers will think that the array starts at index 1, which does makke sense to a new programmer. 
+    var currColor = colorArray[1];
+    //Result: The currColor is red (the user expects blue)
+
+    //Associative Arrays
+
+    //Happy Path
+    var person = [];
+    person["firstName"] = "John";
+    person["lastName"] = "Doe";
+    person["age"] = 46;
+    console.log(person["firstName"]);
+    //Result: John
+
+    //Nasty Path
+    //Reason: Associative arrays do not keep size in the same way that arrays do.
+    console.log(person.length);
+    //Result: 0, the user likely anticipated 3.
+
+    //Nasty Path
+    //Reason: Associative arrays do not index by number but  name. 
+    console.log(person[2]);
+    //Result: undefined
+
+    //Nasty Path
+    //Reason: index not found
+    console.log(person["q"]);
+    //Result: Undefined
+
+
+
+
+
+
+
+
 
 
 
