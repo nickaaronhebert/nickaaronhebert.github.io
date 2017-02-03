@@ -1,284 +1,104 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <script type="text/javascript">
-    // Loops, Conditional Statements, Functions, Variables, Parameters, Arrays, Associative Arrays  
-
-    //For Loops
-    //Happy Path
-    var cars = ["BMW", "Volvo", "Saab", "Ford", "Fiat", "Audi"];            
-    var i;
-    for (i = 0; i < cars.length; i++) {
-        console.log(cars[i]);
-    }
-    //Result - Will print out each car from the cars array. 
-
-    //Nasty Path
-    //Reason: Programming beginners will think that the first element in an array will be element 1. Hence they will put i = 1. 
-    try {
-      for (i = 1; i < cars.length; i++) {
-          console.log(cars[i]);
-      }
-    }
-    catch(err) {
-       console.log(err.message);
-    }
-    //Result: The first element in the list will not be processed.
-
-    //While Loops
-    //Happy Path
-    var cars = ["BMW", "Volvo", "Saab", "Ford", "Fiat", "Audi"];            
-    var i = 0;
-    while (i < cars.length) {
-        console.log(cars[i]);
-        i++;
-    }
-    //Result - Will print out each car from the cars array. 
-
-    //Nasty Path
-    //Reason: Programming beginners will use a while loop instead of a for loop for this given situation. 
-    var cars = ["BMW", "Volvo", "Saab", "Ford", "Fiat", "Audi"];            
-    var i = 0;
-    while (i < cars.length) {
-        console.log(cars[i]);
-        i++;
-    }
-    //Result: The list will print out perfectly. But this is not the ideal usage. 
-
-    //Nasty Path
-    //Reason: i will be incremented before it is evaluated. 
-    var cars = ["BMW", "Volvo", "Saab", "Ford", "Fiat", "Audi"];            
-    var i = 0;
-    try {
-      while (i < cars.length) {
-        i++;
-        console.log(cars[i]);
-        
-      }
-    }
-    catch(err) {
-       console.log(err.message);
-    }
-    //Result: The first element will be bypassed.
-
-    //Conditional Statements
-    //Happy Path
-    if (i == 2) {
-        console.log("Success!");
-    } else { 
-        console.log("Not a success");
-    }
-    //Result - Will print out each car from the cars array. 
-
-    //Nasty Path
-    //Reason: Programmers will accidentally use one equal sign instead of two. 
-    if (i = 2) {
-        console.log("Success!");
-    } else { 
-        console.log("Not a success Success!");
-    }
-    //Result: This is an assignment which will cause the statement to evaluate to true, which is not what we want to happen. 
-
-    //Nasty Path
-    //Reason: Many beginning programmers will think that an else statement will have a statement attached to it. 
-    var a, b;
-
-    //Result: The function will not run.
-
-    //Functions
-    //Happy Path
-    function myFunction(p1, p2) {
-      return p1 * p2;              
-    }
-    myFunction(4,6);
-    //Result - The function returns the product of p1 and p2 
-
-    //Nasty Path
-    //Reason: The parameters are data type mismatches.
-    try {
-      function myFunction(p1, p2) {
-        return p1 * p2;              
-      }
-      myFunction("q",6);
-    }
-    catch(err) {
-       console.log(err.message);
-    }
-    //Result: The function will fail because you cannot multiply a string by an integer. 
-
-    //Nasty Path
-    //Reason: Function call needs to match the function definition.
-    try {
-      function xyz() {
-        console.log("Say hello");             
-      }
-      xzy();
-    }
-    catch(err) {
-       console.log(err.message);
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
     }
     
-    //Result - The function executes properly.
-
-    //Nasty Path
-    //Reason: If the programmer is trying to get this function to run as soon as the page loads, then that will not be achieved unless the programmer calls the function in the script tag after the function definition.
-    try {
-      myFunction(1,2);
-      function myFunction(p1, p2) {
-        return p1 * p2;              
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 450px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
       }
+      .row.content {height:auto;} 
     }
-    catch(err) {
-       console.log(err.message);
-    }
-    //Result: The function will fail because need to put the function call after the function definition in Javascript. 
-
-    //Variables
-    //Happy Path
-    var x = 5;
-    var y = 6;
-    var z = x + y; 
-    //Result: z will equal 11
-
-    //Nasty Path
-    //Reason: Trying to add string vars error.
-    var n = "2";
-    var q = "4";
-    var t = n + q;
-    console.log("T is: " + t);
-    //Result: T is 24
-    //If you add anything in strings, it will concatenate it. The user likely wanted 6, not 24. 
-
-    //Nasty Path
-    //Reason: The variable cars is out of scope when the user tries to print it out.           
-    var i = 0;
-    try {
-      if (i == 0) {
-        var cars = "Buick Honda Ford";
-      }
-      console.log(cars);
-    }
-    catch(err) {
-       console.log(err.message);
-    }
-    //Result: The program will not be able to find the cars variable becasue it has been deleted from the stack already.
-
-    //Parameters
-
-    //Happy Path
-    //Reason: The parameter count matches and the parameter types are matching.  
-    function myFunction(p1, p2) {
-      return p1 * p2;              
-    }
-    myFunction(5,6);
-    //Result: Function runs properly
-
-    //Nasty Path
-    //Reason: The parameter count is incorrect.
-    try {
-      function myFunction(p1, p2) {
-        return p1 * p2;              
-      }
-      myFunction(6);
-    }
-    catch(err) {
-       console.log(err.message);
-    }
-    //Result: The function will fail because you need to supply the correct number of function parameters. 
-
-    //Arrays
-    //Happy Path
-    //Reason: An array starts at index 0.
-    var colorArray = ["blue", "red", "orange"];
-    var currColor = colorArray[0];
-    //Result: The currColor is blue
-
-    //Nasty Path
-    //Reason: Some beginning programmers will think that the array starts at index 1, which does makke sense to a new programmer. 
-    var currColor = colorArray[1];
-    //Result: The currColor is red (the user expects blue)
-
-    //Associative Arrays
-
-    //Happy Path
-    var person = [];
-    person["firstName"] = "John";
-    person["lastName"] = "Doe";
-    person["age"] = 46;
-    console.log(person["firstName"]);
-    //Result: John
-
-    //Nasty Path
-    //Reason: Associative arrays do not keep size in the same way that arrays do.
-    console.log(person.length);
-    //Result: 0, the user likely anticipated 3.
-
-    //Nasty Path
-    //Reason: Associative arrays do not index by number but  name. 
-    console.log(person[2]);
-    //Result: undefined
-
-    //Nasty Path
-    //Reason: index not found
-    console.log(person["q"]);
-    //Result: Undefined
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  </script>
-  
+  </style>
 </head>
 <body>
-  <div class="header">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-6 companyNameOrLogo">
-          Nick Hebert's Sandbox Week 12
-        </div>
-      </div>
-    </div>    
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Nick Hebert's Sandbox Code</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="">Home</a></li>
+        <li><a href="#">Loops-Associative Arrays</a></li>
+        <li><a href="#">Object Creation - Instantiation</a></li>
+
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
   </div>
-
-  <noscript>
-    <div class="noJavascriptDiv">
-      We utilize Javascript to give you the best possible user experience. Please enable Javascript.
-    </div>
-  </noscript>
-
-  <div id="mainContent">
-    <div>
-      
-    </div>
-    <div class="clearfix"></div>
-    <div class="titleLine"></div>
-    
-    <div style="clear: both; height: 5px;"></div>
-    <div style="clear: both; height: 20px;"></div>
-  </div>  
+</nav>
   
-  <footer>
-    <div class="footerBox">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-sm-5 leftSquare">
-          </div>
-          <div class="col-sm-offset-2 col-sm-5 rightSquare">
-          </div>
-        </div>
+<div class="container-fluid text-center">    
+  <div class="row content">
+    <div class="col-sm-2 sidenav">
+      <p><a href="#">Loops</a></p>
+      <p><a href="#">Conditional Statements</a></p>
+      <p><a href="#">Functions</a></p>
+      <p><a href="#">Variables</a></p>
+      <p><a href="#">Parameters</a></p>
+      <p><a href="#">Arrays</a></p>
+      <p><a href="#">Associative Arrays</a></p>
+    </div>
+    <div class="col-sm-8 text-left"> 
+      <h1>Welcome</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+      <hr>
+      <h3>Test</h3>
+      <p>Lorem ipsum...</p>
+    </div>
+    <div class="col-sm-2 sidenav">
+      <div class="well">
+        <p>ADS</p>
+      </div>
+      <div class="well">
+        <p>ADS</p>
       </div>
     </div>
-    <div class="copyright">
-    </div>
-  </footer>
+  </div>
+</div>
+
+<footer class="container-fluid text-center">
+  <p>Footer Text</p>
+</footer>
+
 </body>
 </html>
