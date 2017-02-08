@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 450px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;} 
+    }
+  </style>
+  <script type="text/javascript">
+    //Arrays and Variables - Happy Path
+    //I will declare it outside of the scope of any function so that I don't have to declare it multiple times. 
+    var statesList = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia","Puerto Rico","Guam","American Samoa","U.S. Virgin Islands","Northern Mariana Islands"]; 
+
+    var usStatesAssociativeArray = [
+    { name: 'ALABAMA', abbreviation: 'AL'}, { name: 'ALASKA', abbreviation: 'AK'}, { name: 'AMERICAN SAMOA', abbreviation: 'AS'}, { name: 'ARIZONA', abbreviation: 'AZ'}, { name: 'ARKANSAS', abbreviation: 'AR'}, { name: 'CALIFORNIA', abbreviation: 'CA'}, { name: 'COLORADO', abbreviation: 'CO'}, { name: 'CONNECTICUT', abbreviation: 'CT'}, { name: 'DELAWARE', abbreviation: 'DE'}, { name: 'DISTRICT OF COLUMBIA', abbreviation: 'DC'}, { name: 'FEDERATED STATES OF MICRONESIA', abbreviation: 'FM'}, { name: 'FLORIDA', abbreviation: 'FL'}, { name: 'GEORGIA', abbreviation: 'GA'}, { name: 'GUAM', abbreviation: 'GU'}, { name: 'HAWAII', abbreviation: 'HI'}, { name: 'IDAHO', abbreviation: 'ID'}, { name: 'ILLINOIS', abbreviation: 'IL'}, { name: 'INDIANA', abbreviation: 'IN'}, { name: 'IOWA', abbreviation: 'IA'}, { name: 'KANSAS', abbreviation: 'KS'}, { name: 'KENTUCKY', abbreviation: 'KY'}, { name: 'LOUISIANA', abbreviation: 'LA'}, { name: 'MAINE', abbreviation: 'ME'}, { name: 'MARSHALL ISLANDS', abbreviation: 'MH'}, { name: 'MARYLAND', abbreviation: 'MD'}, { name: 'MASSACHUSETTS', abbreviation: 'MA'}, { name: 'MICHIGAN', abbreviation: 'MI'}, { name: 'MINNESOTA', abbreviation: 'MN'}, { name: 'MISSISSIPPI', abbreviation: 'MS'}, { name: 'MISSOURI', abbreviation: 'MO'}, { name: 'MONTANA', abbreviation: 'MT'}, { name: 'NEBRASKA', abbreviation: 'NE'}, { name: 'NEVADA', abbreviation: 'NV'}, { name: 'NEW HAMPSHIRE', abbreviation: 'NH'}, { name: 'NEW JERSEY', abbreviation: 'NJ'}, { name: 'NEW MEXICO', abbreviation: 'NM'}, { name: 'NEW YORK', abbreviation: 'NY'}, { name: 'NORTH CAROLINA', abbreviation: 'NC'}, { name: 'NORTH DAKOTA', abbreviation: 'ND'}, { name: 'NORTHERN MARIANA ISLANDS', abbreviation: 'MP'}, { name: 'OHIO', abbreviation: 'OH'}, { name: 'OKLAHOMA', abbreviation: 'OK'}, { name: 'OREGON', abbreviation: 'OR'}, { name: 'PALAU', abbreviation: 'PW'}, { name: 'PENNSYLVANIA', abbreviation: 'PA'}, { name: 'PUERTO RICO', abbreviation: 'PR'}, { name: 'RHODE ISLAND', abbreviation: 'RI'}, { name: 'SOUTH CAROLINA', abbreviation: 'SC'}, { name: 'SOUTH DAKOTA', abbreviation: 'SD'}, { name: 'TENNESSEE', abbreviation: 'TN'}, { name: 'TEXAS', abbreviation: 'TX'}, { name: 'UTAH', abbreviation: 'UT'}, { name: 'VERMONT', abbreviation: 'VT'}, { name: 'VIRGIN ISLANDS', abbreviation: 'VI'}, { name: 'VIRGINIA', abbreviation: 'VA'}, { name: 'WASHINGTON', abbreviation: 'WA'}, { name: 'WEST VIRGINIA', abbreviation: 'WV'}, { name: 'WISCONSIN', abbreviation: 'WI'}, { name: 'WYOMING', abbreviation: 'WY' } ];
+
+    //Functions - Happy Path
+    function populateStatesHappy() {
+      var stateDiv = document.getElementById("stateDiv");
+      var selectList = document.createElement("select");
+      selectList.id = "stateSelect";
+      selectList.className = "form-control";
+      stateDiv.appendChild(selectList);
+
+      for (var i = 0; i < statesList.length; i++) {
+          var option = document.createElement("option");
+          option.value = statesList[i];
+          option.text = statesList[i];
+          selectList.appendChild(option);
+      }
+    }
+    //For Loops - Nasty Path
+    // Many beginning developers will confuse the i < statesList.length with i == statesList.length 
+    // and the loop will cause a buffer overrun.
+
+    function populateStatesNasty() {
+      var stateDiv = document.getElementById("stateDiv");
+      var selectList = document.createElement("select");
+      selectList.id = "stateSelect";
+      selectList.className = "form-control";
+      stateDiv.appendChild(selectList);
+
+      for (var i = 0; i == statesList.length; i++) {
+          var option = document.createElement("option");
+          option.value = statesList[i];
+          option.text = statesList[i];
+          selectList.appendChild(option);
+      }
+    }
+    //While Loop - Happy Path
+    function removeStatesHappy() {
+      var node = document.getElementById("stateDiv");
+      while (node.hasChildNodes()) {
+          node.removeChild(node.lastChild);
+      }
+    }
+
+    //Functions, Parameters Happy Path, If/Else
+    function changeStateImageHappy(stateName) {
+      if (stateName == "Utah") 
+      {
+        document.getElementById("stateImg").src="http://chem.utah.edu/_images/graduate/Utah_welcome.png";
+      }
+      else if (stateName == "Idaho")
+      {
+        document.getElementById("stateImg").src="https://c1.staticflickr.com/9/8146/7638047728_5d5e65fb45_b.jpg";
+      }
+    }
+
+    //If/Else Nasty Path
+    //The if will always evaluate to true because the programmer put used assignment instead of evaluation.
+    function changeStateImageNasty(stateName) {
+      if (stateName = "Texas") 
+      {
+        document.getElementById("stateImg").src="http://www.americanbar.org/content/dam/aba/publications/criminaljustice/washington.authcheckdam.bmp";
+      }
+      else if (stateName == "Washington")
+      {
+        document.getElementById("stateImg").src="http://www.americanbar.org/content/dam/aba/publications/criminaljustice/washington.authcheckdam.bmp";
+      }
+    }
+
+    //Parameters - Nasty Path
+    //Programmers coming from C++/Java would be tempted to put string before a parameter. Not necessary. 
+    
+    // function changeStateImageNasty2(string stateName) {
+    //   if (stateName = "Texas") 
+    //   {
+    //     document.getElementById("stateImg").src="http://www.americanbar.org/content/dam/aba/publications/criminaljustice/washington.authcheckdam.bmp";
+    //   }
+    //   else if (stateName == "Washington")
+    //   {
+    //     document.getElementById("stateImg").src="http://www.americanbar.org/content/dam/aba/publications/criminaljustice/washington.authcheckdam.bmp";
+    //   }
+    // }
+
+    //Associative Arrays - Happy Path
+    function showStateInfoTable () {
+      var table = document.getElementById('stateInfoTable');
+      for (var i = 0; i < usStatesAssociativeArray.length; i++) {
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        var cell0 = row.insertCell(0);
+        var cell1 = row.insertCell(1);
+        cell0.innerHTML = cell0.innerHTML + usStatesAssociativeArray[i]["name"];
+        cell1.innerHTML = cell1.innerHTML + usStatesAssociativeArray[i]["abbreviation"];
+      }
+    }
+
+    //Associative Arrays - Nasty Path
+    //You might think that you would just do 
+    function showStateInfoTableNasty () {
+      var table = document.getElementById('stateInfoTableNasty');
+      for (var i = 0; i < usStatesAssociativeArray.length; i++) {
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        var cell0 = row.insertCell(0);
+        var cell1 = row.insertCell(1);
+        cell0.innerHTML = cell0.innerHTML + usStatesAssociativeArray[i][0];
+        cell1.innerHTML = cell1.innerHTML + usStatesAssociativeArray[i][1];
+      }
+    }
+
+
+  </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Nick Hebert's Sandbox Code</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="">Home</a></li>
+        <li><a href="#">Loops-Associative Arrays</a></li>
+        <li><a href="#">Object Creation - Instantiation</a></li>
+
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center">    
+  <div class="row content">
+    <div class="col-sm-2 sidenav">
+      <p><a href="#">Object Creation Functions</a></p>
+      <p><a href="#">Ineritance</a></p>
+      <p><a href="#">Properties</a></p>
+      <p><a href="#">Methods</a></p>
+      <p><a href="#">Inheritance</a></p>
+    </div>
+    <div class="col-sm-8 text-left"> 
+      <h1>Object Creation Functions</h1>
+
+
+      
+    </div>
+    <div class="col-sm-2 sidenav">
+      <div class="well">
+        <p>ADS</p>
+      </div>
+      <div class="well">
+        <p>ADS</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="container-fluid text-center">
+  <p>Footer Text</p>
+</footer>
+
+</body>
+</html>
