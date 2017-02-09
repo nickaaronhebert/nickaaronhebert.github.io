@@ -107,7 +107,7 @@
         cell1.innerHTML = cell1.innerHTML + stateObj[stateProperties[i]];
       }
       document.getElementById('addPropertyButton').innerHTML = " <button type='button' class='btn btn-primary btn-block' onclick='addStateProperty(" +  "\"" + stateObj.stateName + "\""+  ");'>Add Property Value - Happy</button>";
-      document.getElementById('addCityRequestButton').innerHTML = " <button type='button' class='btn btn-primary btn-block' onclick='getStateCities(" +  "\"" + stateObj.stateAbbreviation + "\""+  ");'>Get State Cities - Happy</button>";
+      document.getElementById('addCityRequestButton').innerHTML = " <button type='button' class='btn btn-primary btn-block' onclick='getStateCities(" +  "\"" + stateObj.stateAbbreviation + "\""+  ");'>Get State Congresspeople - Happy</button>";
     }
 
     //Object, Properties, Methods, Inheritance - Happy Path
@@ -126,11 +126,13 @@
     }
 
     function getStateCities(stateAbbreviation) {
-      var API_STRING = "http://api.sba.gov/geodata/city_links_for_state_of/" + stateAbbreviation + ".json";
+      var API_STRING = "https://www.govtrack.us/api/v2/role?current=true&state=" + stateAbbreviation;
       var xhr = new XMLHttpRequest();
       xhr.open("GET", API_STRING, true);
       xhr.send(null); 
-      console.log(xhr.response);
+      console.log(xhr.responseText);
+      var q = JSON.parse(xhr.response);
+      console.log(q);
             // body...
     }
 
