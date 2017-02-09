@@ -107,7 +107,7 @@
         cell1.innerHTML = cell1.innerHTML + stateObj[stateProperties[i]];
       }
       document.getElementById('addPropertyButton').innerHTML = " <button type='button' class='btn btn-primary btn-block' onclick='addStateProperty(" +  "\"" + stateObj.stateName + "\""+  ");'>Add Property Value - Happy</button>";
-      document.getElementById('addCityRequestButton').innerHTML = " <button type='button' class='btn btn-primary btn-block' onclick='getStateCities(" +  "\"" + stateObj.stateAbbreviation + "\""+  ");'>Get State Congresspeople - Happy</button>";
+      document.getElementById('congressPeopleButton').innerHTML = " <button type='button' class='btn btn-primary btn-block' onclick='getStateCities(" +  "\"" + stateObj.stateAbbreviation + "\""+  ");'>Get State Congresspeople - Happy</button>";
     }
 
     //Object, Properties, Methods, Inheritance - Happy Path
@@ -125,15 +125,24 @@
       viewStateProperties(stateName);
     }
 
+    //JSON.parse, XMLHTTPRequest, createElement, appendChild
     function getStateCities(stateAbbreviation) {
+      var congressList = document.getElementById("congressPeopleList");
+      while (congressList.hasChildNodes()) {
+          congressList.removeChild(congressList.childNodes[0]);
+      } 
       var API_STRING = "https://www.govtrack.us/api/v2/role?current=true&state=" + stateAbbreviation;
       var xhr = new XMLHttpRequest();
-      xhr.open("GET", API_STRING, true);
-      xhr.send(null); 
-      console.log(xhr.responseText);
-      var q = JSON.parse(xhr.response);
-      console.log(q);
-            // body...
+      xhr.open("GET", API_STRING, false);
+      xhr.send(); 
+      var congressPeople = JSON.parse(xhr.response).objects;
+      var congressPeopleDiv = document.getElementById('congressPeople');
+      for (var i = 0; i < congressPeople.length; i++) {
+        var element = document.createElement("LI");
+        var text = document.createTextNode(congressPeople[i].person.firstname +  " " + congressPeople[i].person.lastname);
+        element.appendChild(text);
+        document.getElementById("congressPeopleList").appendChild(element);
+      }
     }
 
   </script>
@@ -172,6 +181,13 @@
       <p><a href="#">Inheritance</a></p>
       <p><a href="#">Properties</a></p>
       <p><a href="#">Methods</a></p>
+      <p><a href="#">JSON Parse</a></p>
+      <p><a href="#">Stringify</a></p>
+      <p><a href="#">XMLHTTPRequest</a></p>
+      <p><a href="#">createElement</a></p>
+      <p><a href="#">appendChild</a></p>
+      <p><a href="#">removeChild</a></p>
+
     </div>
     <div class="col-sm-8 text-left"> 
       <h1>Object Creation Functions</h1>
@@ -221,9 +237,13 @@
       </div>
       <div id="addPropertyButton">  
       </div>
-      <div id="addCityRequestButton">  
+      <div id="congressPeopleButton">  
       </div>
-      
+      <div id="congressPeople">  
+      </div>
+        <ul id="congressPeopleList">
+          
+        </ul>
     </div>
   </div>
 </div>
