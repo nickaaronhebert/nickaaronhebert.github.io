@@ -4,7 +4,7 @@
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-<!--   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <!--   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
   <style>
@@ -107,7 +107,8 @@
         cell1.innerHTML = cell1.innerHTML + stateObj[stateProperties[i]];
       }
       document.getElementById('addPropertyButton').innerHTML = " <button type='button' class='btn btn-primary btn-block' onclick='addStateProperty(" +  "\"" + stateObj.stateName + "\""+  ");'>Add Property Value - Happy</button>";
-      document.getElementById('congressPeopleButton').innerHTML = " <button type='button' class='btn btn-primary btn-block' onclick='getStateCities(" +  "\"" + stateObj.stateAbbreviation + "\""+  ");'>Get State Congresspeople - Happy</button>";
+      document.getElementById('congressPeopleButton').innerHTML = " <button type='button' class='btn btn-primary btn-block' onclick='getCongressPeople(" +  "\"" + stateObj.stateAbbreviation + "\""+  ");'>Get Congress People XMLHTTPRequest - Happy</button>";
+      
     }
 
     //Object, Properties, Methods, Inheritance - Happy Path
@@ -125,25 +126,34 @@
       viewStateProperties(stateName);
     }
 
-    //JSON.parse, XMLHTTPRequest, createElement, appendChild
-    function getStateCities(stateAbbreviation) {
+    function getCongressPeople(stateAbbreviation) {
       var congressList = document.getElementById("congressPeopleList");
       while (congressList.hasChildNodes()) {
           congressList.removeChild(congressList.childNodes[0]);
-      } 
+      }
       var API_STRING = "https://www.govtrack.us/api/v2/role?current=true&state=" + stateAbbreviation;
       var xhr = new XMLHttpRequest();
       xhr.open("GET", API_STRING, false);
       xhr.send(); 
       var congressPeople = JSON.parse(xhr.response).objects;
-      var congressPeopleDiv = document.getElementById('congressPeople');
+      console.log(congressPeople);
       for (var i = 0; i < congressPeople.length; i++) {
         var element = document.createElement("LI");
         var text = document.createTextNode(congressPeople[i].person.firstname +  " " + congressPeople[i].person.lastname);
         element.appendChild(text);
         document.getElementById("congressPeopleList").appendChild(element);
       }
+
+      //Create the API endpoint
+      //1. Open a connection between the API
+      //2. Send that request.
+      //3. Parse the response
+      //4. Do something with the response objects
+      //5. Create a list of all the congress people and display it.
+
     }
+
+    
 
   </script>
 </head>
