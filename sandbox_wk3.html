@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!--   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!--   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+  <style>
+
+    @keyframes canvasChanger {
+      0%   {background-color: red;
+            width: 200px;
+            height: 200px;
+           }
+      25%  {background-color: purple;
+            width: 300px;
+            height: 300px;
+           }
+      50%  {background-color: blue;
+            width: 400px;
+            height: 400px;
+           }
+      100% {background-color: green;
+            width: 500px;
+            height: 500px;
+           }
+    }
+
+    #myCanvas:hover {
+        width: 100px;
+        height: 100px;
+        background-color: green;
+        animation-name: canvasChanger;
+        animation-duration: 20s;
+    }
+
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    .row.content {height: 450px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;} 
+    }
+
+    #alabama_row {
+      transition: background-color 5s ease-in;
+
+    }
+
+    #texas_row {
+      transition: background-color 5s;
+    }
+
+    #utah_row {
+      transition: background-color 5s;
+    }
+
+    #washington_row {
+      transition: background-color 5s;
+    }
+
+    
+  </style>
+  <script type="text/javascript">
+
+    $(function(){
+      var video = document.getElementById("xmlVideo");
+      video.setAttribute('height', '100');
+      video.setAttribute('width ', '300');
+    })
+
+    function fullscreenVideo() {
+      var video = document.getElementById("xmlVideo");
+      video.setAttribute('height', '300');
+      video.setAttribute('width ', '700');
+    }
+
+    function smallscreenVideo() {
+      var video = document.getElementById("xmlVideo");
+      video.setAttribute('height', '100');
+      video.setAttribute('width ', '300');
+    }
+
+    function drawWords(words) {
+      var words = document.getElementById('wordSuggestion').value;
+      var canvas = document.getElementById("myCanvas");
+
+      var canvasContext = canvas.getContext("2d");
+      canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+      canvasContext.font = "italic 40pt Calibri";
+      canvasContext.fillText(words,10,50);
+    }
+
+    function drawWordsWrong(words) {
+      var words = document.getElementById('wordSuggestionWrong').value;
+      var canvas = document.getElementById("myCanvasWrong");
+      var canvasContext = canvas.getContext("2d");
+      canvasContext.font = "italic 40pt Calibri";
+      canvasContext.fillText(words,10,50);
+    }
+
+    function colorRowRed(state) {
+      var idField = state + "_row";
+      var stateRow = document.getElementById(idField);
+      stateRow.style.backgroundColor = "red";
+      stateRow.style.height = "20px";
+    }
+
+    function colorRowGreen(state) {
+      var idField = state + "_row";
+      var stateRow = document.getElementById(idField);
+      stateRow.style.backgroundColor = "green";
+    }
+
+  </script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Nick Hebert's Sandbox Code</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="">Home</a></li>
+        <li><a href="nickaaronhebert.github.io/sandbox_wk1.html">Loops-Associative Arrays</a></li>
+        <li><a href="nickaaronhebert.github.io/sandbox_wk2.html">Object Creation - Instantiation</a></li>
+        <li><a href="nickaaronhebert.github.io/sandbox_wk3.html">CSS Tricks</a></li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+  
+<div class="container-fluid text-center">    
+  <div class="row content">
+      <h2>Topics Covered</h2>
+      <p>Video, Audio, Canvas Tags</p>
+      <p>CSS Manipulation</p>
+      <p>CSS Animation</p>
+    <div class="col-sm-8 text-left"> 
+      <h1>CSS Tricks</h1>
+
+      <video id="xmlVideo" controls>
+        <source src="../xmlHttpRequest.mov" type="video/mp4">
+      </video>
+      <br>
+      <button type="button" class="btn btn-info btn-block" onclick="fullscreenVideo();">Make it full screen!</button>
+      <button type="button" class="btn btn-info btn-block" onclick="smallscreenVideo();">Make it small!</button>
+      
+
+      <h5>Audio - Nice Classical Music Song</h5>
+      <audio controls>
+       <source src="http://media.w3.org/2010/07/bunny/04-Death_Becomes_Fur.mp4"
+               type='audio/mp4'>
+       <!-- The next two lines are only executed if the browser doesn't support MP4 files -->
+       <source src="http://media.w3.org/2010/07/bunny/04-Death_Becomes_Fur.oga"
+               type='audio/ogg; codecs=vorbis'>
+       <!-- The next line will only be executed if the browser doesn't support the <audio> tag-->
+       <p>Looks like this browser does not support audio tags.</p>
+      </audio>
+
+      <h4>Types some words and then let's draw them on the canvas</h4>
+      <h4>You probably need a bigger canvas, huh?</h4>
+
+      Type Here:    <input type="" id="wordSuggestion" name="">
+      <canvas id="myCanvas" width="300" height="300" style="border:1px solid #d3d3d3;">
+      Your browser does not support the HTML5 canvas tag.</canvas>
+      <br>
+      <button type="button" class="btn btn-info btn-block" onclick="drawWords();">Draw in the canvas!</button>
+
+
+      <h4>Types some words and then let's see what mistake happens</h4>
+      <h4>Click to make it jump</h4>
+      <button type="button" class="btn btn-info btn-block" onclick="drawWordsWrong();">Draw in the canvas! - Nasty! </button>
+      <div style="width: 900px;">
+        Type Here:    <input type="" id="wordSuggestionWrong" name=""> <br>
+          <canvas id="myCanvasWrong" width="300" height="300" style="border:1px solid #d3d3d3;">
+        Your browser does not support the HTML5 canvas tag.</canvas>
+      </div>
+      <br>
+      
+      <table>
+        <thead>
+          <td style="width: 400px;">State</td>
+          <td style="width: 500px;">State Image</td>
+          <td>Actions</td>
+        </thead>
+        <tbody>
+          <tr id="alabama_row">
+            <td>Alabama</td>
+            <td><img style="height: 300px; width: 300px;" src="https://img.clipartfest.com/05b95d9871f46e698e732806aab5b5c0_alabama-state-outline-clip-art-alabama-state-outline-clipart_372-593.png"></td>
+            <td>
+              <button type="button" class="btn btn-info btn-block" onclick="colorRowRed('alabama');">Not my state! </button>
+              <button type="button" class="btn btn-info btn-block" onclick="colorRowGreen('alabama');">This is my state! </button>
+            </td>
+
+          </tr>
+          <tr id="utah_row">
+            <td>Utah</td>
+            <td><img style="height: 300px; width: 300px;" src="https://img.clipartfest.com/4bbc2186bda5684bce098b822d546bad_state-of-utah-outline-map-utah-state-clipart_700-700.jpeg"></td>
+            <td>
+              <button type="button" class="btn btn-info btn-block" onclick="colorRowRed('utah');">Not my state! </button>
+              <button type="button" class="btn btn-info btn-block" onclick="colorRowGreen('utah');">This is my state! </button>
+            </td>
+
+          </tr>
+          <tr id="washington_row">
+            <td>Washington</td>
+            <td><img style="height: 300px; width: 300px;" src="https://s-media-cache-ak0.pinimg.com/736x/5c/64/d0/5c64d073284d52492858162d33fa6838.jpg"></td>
+            <td>
+              <button type="button" class="btn btn-info btn-block" onclick="colorRowRed('washington');">Not my state! </button>
+              <button type="button" class="btn btn-info btn-block" onclick="colorRowGreen('washington');">This is my state! </button>
+            </td>
+
+          </tr>
+
+        </tbody>
+      </table>
+
+      
+
+
+
+
+      
+    </div>
+    
+  </div>
+</div>
+
+
+</body>
+</html>
