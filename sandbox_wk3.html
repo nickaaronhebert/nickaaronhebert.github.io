@@ -87,22 +87,15 @@
   </style>
   <script type="text/javascript">
 
-    $(function(){
-      var video = document.getElementById("xmlVideo");
-      video.setAttribute('height', '100');
-      video.setAttribute('width ', '300');
-    })
 
     function fullscreenVideo() {
       var video = document.getElementById("xmlVideo");
       video.setAttribute('height', '300');
-      video.setAttribute('width ', '700');
     }
 
     function smallscreenVideo() {
       var video = document.getElementById("xmlVideo");
       video.setAttribute('height', '100');
-      video.setAttribute('width ', '300');
     }
 
     function drawWords(words) {
@@ -140,19 +133,14 @@
 </head>
 <body>
 
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>                        
-      </button>
-      <a class="navbar-brand" href="#">Nick Hebert's Sandbox Code</a>
+<nav>
+  <div >
+    <div>
+      <a href="#">Nick Hebert's Sandbox Code</a>
     </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="">Home</a></li>
+    <div>
+      <ul>
+        <li><a href="">Home</a></li>
         <li><a href="nickaaronhebert.github.io/sandbox_wk1.html">Loops-Associative Arrays</a></li>
         <li><a href="nickaaronhebert.github.io/sandbox_wk2.html">Object Creation - Instantiation</a></li>
         <li><a href="nickaaronhebert.github.io/sandbox_wk3.html">CSS Tricks</a></li>
@@ -162,13 +150,13 @@
   </div>
 </nav>
   
-<div class="container-fluid text-center">    
-  <div class="row content">
+<div c>    
+  <div>
       <h2>Topics Covered</h2>
       <p>Video, Audio, Canvas Tags</p>
       <p>CSS Manipulation</p>
       <p>CSS Animation</p>
-    <div class="col-sm-8 text-left"> 
+    <div > 
       <h1>CSS Tricks</h1>
 
       <!-- My video won't load because it was too big to stick into Github. But I can of course get it to work locally. -->
@@ -198,12 +186,12 @@
       <canvas id="myCanvas" width="300" height="300" style="border:1px solid #d3d3d3;">
       Your browser does not support the HTML5 canvas tag.</canvas>
       <br>
-      <button type="button" class="btn btn-info btn-block" onclick="drawWords();">Draw in the canvas!</button>
+      <button type="button" onclick="drawWords();">Draw in the canvas!</button>
 
 
       <h4>Types some words and then let's see what mistake happens</h4>
       <h4>Click to make it jump</h4>
-      <button type="button" class="btn btn-info btn-block" onclick="drawWordsWrong();">Draw in the canvas! - Nasty! </button>
+      <button type="button" onclick="drawWordsWrong();">Draw in the canvas! - Nasty! </button>
       <div style="width: 900px;">
         Type Here:    <input type="" id="wordSuggestionWrong" name=""> <br>
           <canvas id="myCanvasWrong" width="300" height="300" style="border:1px solid #d3d3d3;">
@@ -231,8 +219,8 @@
             <td>Utah</td>
             <td><img style="height: 300px; width: 300px;" src="https://img.clipartfest.com/4bbc2186bda5684bce098b822d546bad_state-of-utah-outline-map-utah-state-clipart_700-700.jpeg"></td>
             <td>
-              <button type="button" class="btn btn-info btn-block" onclick="colorRowRed('utah');">Not my state! </button>
-              <button type="button" class="btn btn-info btn-block" onclick="colorRowGreen('utah');">This is my state! </button>
+              <button type="button" onclick="colorRowRed('utah');">Not my state! </button>
+              <button type="button" onclick="colorRowGreen('utah');">This is my state! </button>
             </td>
 
           </tr>
@@ -240,20 +228,14 @@
             <td>Washington</td>
             <td><img style="height: 300px; width: 300px;" src="https://s-media-cache-ak0.pinimg.com/736x/5c/64/d0/5c64d073284d52492858162d33fa6838.jpg"></td>
             <td>
-              <button type="button" class="btn btn-info btn-block" onclick="colorRowRed('washington');">Not my state! </button>
-              <button type="button" class="btn btn-info btn-block" onclick="colorRowGreen('washington');">This is my state! </button>
+              <button type="button" onclick="colorRowRed('washington');">Not my state! </button>
+              <button type="button" onclick="colorRowGreen('washington');">This is my state! </button>
             </td>
 
           </tr>
 
         </tbody>
       </table>
-
-      
-
-
-
-
       
     </div>
     
