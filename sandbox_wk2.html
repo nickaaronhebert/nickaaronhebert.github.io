@@ -8,37 +8,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
   <style>
-    /* Remove the navbar's default margin-bottom and rounded borders */ 
-    .navbar {
-      margin-bottom: 0;
-      border-radius: 0;
-    }
-    
-    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 450px}
-    
-    /* Set gray background color and 100% height */
-    .sidenav {
-      padding-top: 20px;
-      background-color: #f1f1f1;
-      height: 100%;
-    }
-    
-    /* Set black background color, white text and some padding */
-    footer {
-      background-color: #555;
-      color: white;
-      padding: 15px;
-    }
-    
-    /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
-      .sidenav {
-        height: auto;
-        padding: 15px;
-      }
-      .row.content {height:auto;} 
-    }
+    /* Remove the navbar's default margin-bottom and rounded borders */
 
     .southernState {
       background-color: red;
@@ -166,32 +136,32 @@
 </head>
 <body>
 
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+<nav>
+  <div>
+    <div>
+      <button type="button" data-toggle="collapse" data-target="#myNavbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>                        
       </button>
-      <a class="navbar-brand" href="#">Nick Hebert's Sandbox Code</a>
+      <a href="#">Nick Hebert's Sandbox Code</a>
     </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="">Home</a></li>
+    <div id="myNavbar">
+      <ul>
+        <li><a href="">Home</a></li>
         <li><a href="file:///Users/nick/Documents/school/byu2017w/cs261/nickaaronhebert.github.io/sandbox_wk1.html">Loops-Associative Arrays</a></li>
         <li><a href="file:///Users/nick/Documents/school/byu2017w/cs261/nickaaronhebert.github.io/sandbox_wk2.html">Object Creation - Instantiation</a></li>
 
       </ul>
-      <ul class="nav navbar-nav navbar-right">
+      <ul>
         <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
       </ul>
     </div>
   </div>
 </nav>
   
-<div class="container-fluid text-center">    
-  <div class="row content">
+<div>    
+  <div>
     <div class="col-sm-2 sidenav">
       <h2>Topics Covered</h2>
       <p><a href="#">Object Creation Functions</a></p>
@@ -206,14 +176,14 @@
       <p><a href="#">removeChild</a></p>
 
     </div>
-    <div class="col-sm-8 text-left"> 
+    <div> 
       <h1>Object Creation Functions</h1>
 
       <div id="loop_array_section">
-        <button type="button" class="btn btn-info btn-block" onclick="showStateInfoTable();">Fill Table Through Object Creation - Happy</button>
-         <button type="button" class="btn btn-info btn-block" onclick="paintSouthernStates();">Highlight States in the South- Happy</button>
+        <button type="button" onclick="showStateInfoTable();">Fill Table Through Object Creation - Happy</button>
+         <button type="button" onclick="paintSouthernStates();">Highlight States in the South- Happy</button>
         <div id="stateNamesAndAbbrs">
-          <table class="table table-striped">
+          <table>
             <thead>
               <tr>
                 <th>State Name</th>
@@ -232,7 +202,7 @@
     <div class="col-sm-2 sidenav">
       <div id="wellStateProperties">
         <div id="stateProperties">
-          <table class="table table-striped">
+          <table>
             <thead>
               <tr>
                 <th>Property</th>
@@ -245,13 +215,13 @@
           </table>
         </div>
       </div>
-      <div class="form-group">
+      <div>
         <label for="usr">Property Name:</label>
-        <input type="text" class="form-control" id="propertyName">
+        <input type="text" id="propertyName">
       </div>
-      <div class="form-group">
+      <div>
         <label for="propertyValue">Property Value:</label>
-        <input type="text" class="form-control" id="propertyValue">
+        <input type="text" id="propertyValue">
       </div>
       <div id="addPropertyButton">  
       </div>
@@ -266,9 +236,7 @@
   </div>
 </div>
 
-<footer class="container-fluid text-center">
-  <p>Footer Text</p>
-</footer>
-
 </body>
 </html>
+
+18773118853
