@@ -83,6 +83,20 @@
       transition: background-color 5s;
     }
 
+    .transform {
+      -webkit-transition: all 2s ease;  
+      -moz-transition: all 2s ease;  
+      -o-transition: all 2s ease;  
+      -ms-transition: all 2s ease;  
+      transition: all 2s ease;
+    }
+
+    .transform-active {
+      background-color: #45CEE0;
+      height: 200px;
+      width: 200px;
+    }
+
     
   </style>
   <script type="text/javascript">
@@ -90,12 +104,12 @@
 
     function fullscreenVideo() {
       var video = document.getElementById("xmlVideo");
-      video.setAttribute('height', '300');
+      video.setAttribute('width', '100%');
     }
 
     function smallscreenVideo() {
       var video = document.getElementById("xmlVideo");
-      video.setAttribute('height', '100');
+      video.setAttribute('width', '40%');
     }
 
     function drawWords(words) {
@@ -127,6 +141,58 @@
       var idField = state + "_row";
       var stateRow = document.getElementById(idField);
       stateRow.style.backgroundColor = "green";
+    }
+
+    function shrinkShape(shape){
+      document.getElementById(shape).style.transition = "height width linear 2s ease-in";
+      document.getElementById(shape).style.height = '100px';
+      document.getElementById(shape).style.width = '100px';
+
+    }
+
+    function enlargeShape(shape){
+      document.getElementById(shape).style.transition = "height 0.7s linear 0s";
+      document.getElementById(shape).style.height = '140px';
+      document.getElementById(shape).style.width = '140px';
+    }
+
+
+
+    function drawShape(shape) {
+      var canvas = document.getElementById("myCanvasShape");
+      var canvasContext = canvas.getContext("2d");
+      shrinkShape("square");
+      shrinkShape("circle");
+      shrinkShape("triangle");
+      enlargeShape(shape);
+      if (shape == "circle") {
+        var circumference = (Math.floor(Math.random() * 9) + 1 ) * 10;
+        var startLocation = (Math.floor(Math.random() * 9) + 1 ) * 10;
+        canvasContext.beginPath();
+        canvasContext.arc(startLocation,40,circumference,0,2*Math.PI);
+        canvasContext.stroke();
+      }
+      if (shape == "square") {
+        document.getElementById("square").style.transition = "background 2.0s linear 2s ease-in";
+        document.getElementById("square").style.height = '140px';
+        document.getElementById("square").style.width = '140px';
+        var startLocationLeft = (Math.floor(Math.random() * 18) + 1 ) * 10;
+        var startLocationRight = (Math.floor(Math.random() * 18) + 1 ) * 10;
+        var hw = (Math.floor(Math.random() * 9) + 1 ) * 10;
+        canvasContext.rect(startLocationLeft, startLocationRight, hw, hw);
+        canvasContext.stroke();
+      }
+
+      if (shape == "triangle") {
+        var circumference = (Math.floor(Math.random() * 40) + 1 ) * 10;
+        var startLocation = (Math.floor(Math.random() * 40) + 1 ) * 10;
+        canvasContext.beginPath();
+        canvasContext.moveTo(circumference, circumference);
+        canvasContext.lineTo(circumference, startLocation);
+        canvasContext.lineTo(startLocation, startLocation);
+        canvasContext.closePath();
+        canvasContext.stroke();
+      }
     }
 
   </script>
@@ -190,12 +256,12 @@
       <button type="button" onclick="drawWords();">Draw in the canvas!</button>
 
 
-      <h4>Types some words and then let's see what mistake happens</h4>
-      <h4>Click to make it jump</h4>
-      <button type="button" onclick="drawWordsWrong();">Draw in the canvas! - Nasty! </button>
+      <h4>Click on a shape to draw it.</h4>
+      <img src="https://i.ytimg.com/vi/rb8Y38eilRM/maxresdefault.jpg" id="square" onclick="drawShape('square')" style="height: 100px; width: 100px;">
+      <img src="https://i.ytimg.com/vi/LlXnXf6FSq8/maxresdefault.jpg" id="circle" onclick="drawShape('circle')" style="height: 100px; width: 100px;">
+      <img src="https://i.ytimg.com/vi/2wFMdKb0cz0/maxresdefault.jpg" id="triangle" onclick="drawShape('triangle')" style="height: 100px; width: 100px;">
       <div style="width: 900px;">
-        Type Here:    <input type="" id="wordSuggestionWrong" name=""> <br>
-          <canvas id="myCanvasWrong" width="300" height="300" style="border:1px solid #d3d3d3;">
+          <canvas id="myCanvasShape" width="300" height="300" style="border:1px solid #d3d3d3;">
         Your browser does not support the HTML5 canvas tag.</canvas>
       </div>
       <br>
