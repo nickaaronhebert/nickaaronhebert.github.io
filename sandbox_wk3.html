@@ -171,19 +171,17 @@
         canvasContext.beginPath();
         canvasContext.arc(startLocation,40,circumference,0,2*Math.PI);
         canvasContext.stroke();
+        return;
       }
-      if (shape == "square") {
-        document.getElementById("square").style.transition = "background 2.0s linear 2s ease-in";
-        document.getElementById("square").style.height = '140px';
-        document.getElementById("square").style.width = '140px';
+      else if (shape == "square") {
         var startLocationLeft = (Math.floor(Math.random() * 18) + 1 ) * 10;
         var startLocationRight = (Math.floor(Math.random() * 18) + 1 ) * 10;
         var hw = (Math.floor(Math.random() * 9) + 1 ) * 10;
         canvasContext.rect(startLocationLeft, startLocationRight, hw, hw);
         canvasContext.stroke();
+        return;
       }
-
-      if (shape == "triangle") {
+      else {
         var circumference = (Math.floor(Math.random() * 40) + 1 ) * 10;
         var startLocation = (Math.floor(Math.random() * 40) + 1 ) * 10;
         canvasContext.beginPath();
@@ -192,6 +190,7 @@
         canvasContext.lineTo(startLocation, startLocation);
         canvasContext.closePath();
         canvasContext.stroke();
+        return;
       }
     }
 

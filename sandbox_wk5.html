@@ -82,26 +82,32 @@
 
   <script type="text/javascript">
 
-    var statesList = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia","Puerto Rico","Guam","American Samoa","U.S. Virgin Islands","Northern Mariana Islands"]; 
+    var statesList = ["", "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia","Puerto Rico","Guam","American Samoa","U.S. Virgin Islands","Northern Mariana Islands"]; 
 
     function addStateToList() {
       var stateInput = document.getElementById("stateValue");
       var state = stateInput.value;
-      if (typeof(Storage) !== "undefined") {
-        var states = localStorage.getItem("states") ? localStorage.getItem("states") : "";
-        states +=  stateInput.value + ", ";
-        localStorage.setItem("states", states);
-      } 
-      else {
-
-      }
+      var statesList = JSON.parse(localStorage.getItem("states"));
+      statesList.push(state);
+      localStorage.setItem("states", JSON.stringify(statesList));
       checkLocalStorage();
-      
     }
 
     function checkLocalStorage() {
       if (localStorage.getItem("states")) {
-        document.getElementById("result").innerHTML = localStorage.getItem("states");
+        var statesList = JSON.parse(localStorage.getItem("states"));
+        var stateStr = "";
+        for (var i = 0; i < statesList.length; i++ )
+        {
+          stateStr += statesList[i] + ", ";
+        }
+        document.getElementById("result").innerHTML = stateStr;
+      }
+      else {
+        localStorage.setItem("states", JSON.stringify([]));
+      }
+      if (!localStorage.getItem("stateInfo")) {
+        localStorage.setItem("stateInfo", JSON.stringify({}));
       }
     }
 
@@ -116,36 +122,59 @@
     }
 
     function populateStateInfo() {
+      clearTable(document.getElementById('cityTableBody'));
+      clearTable(document.getElementById('coolFactList'));
+      
       var selectValue = document.getElementById("stateSelectList").value;
-      if (localStorage.getItem("stateInfo")) {
-        var stateInfoObj = JSON.parse(localStorage.getItem("stateInfo"));
-        if (!stateInfoObj[selectValue]) {
-          stateInfoObj[selectValue] = {"cool_facts": [], "cities_populations": {}};
-          localStorage.setItem("stateInfo", JSON.stringify(stateInfoObj));
-        }
+      var stateInfoObj = JSON.parse(localStorage.getItem("stateInfo"));
+      if (stateInfoObj[selectValue]) {
+        populateCoolFacts(selectValue);
+        showCitiesAndPopulations();
       }
-      else {
-        localStorage.setItem("stateInfo", JSON.stringify({}));
+      
+    }
+
+    function clearTable(resource) {
+      while (resource.hasChildNodes()) {
+          resource.removeChild(resource.childNodes[0]);
       }
-      populateCoolFacts(selectValue);
-      showCitiesAndPopulations();
+      document.getElementById("coolFactInput").value = "";
+      document.getElementById("cityInput").value = "";
+      document.getElementById("populationInput").value = "";
     }
 
     function addCoolFactToList() {
+      var table = document.getElementById('coolFactList');
+      while (table.hasChildNodes()) {
+          table.removeChild(table.childNodes[0]);
+      }
       var stateInfoObj = JSON.parse(localStorage.getItem("stateInfo"));
       var state = document.getElementById("stateSelectList").value;
-      stateInfoObj[state]["cool_facts"].push(document.getElementById("coolFactInput").value);
+      if (state == "") {return;}
+      if (stateInfoObj[state]) 
+      {
+        if (!stateInfoObj[state]["cool_facts"]) {
+          stateInfoObj[state]["cool_facts"] = [];
+        };
+        stateInfoObj[state]["cool_facts"].push(document.getElementById("coolFactInput").value);
+      }
+      else 
+      {
+        stateInfoObj[state] = {};
+        stateInfoObj[state]["cool_facts"] = [];
+        stateInfoObj[state]["cool_facts"].push(document.getElementById("coolFactInput").value);
+
+      }
+      
       localStorage.setItem("stateInfo", JSON.stringify(stateInfoObj));
       populateCoolFacts(state);
     }
 
     function populateCoolFacts(state) {
       var stateInfoObj = JSON.parse(localStorage.getItem("stateInfo"));
+      if (!stateInfoObj[state]["cool_facts"]) {return;}
       var coolFacts = stateInfoObj[state]["cool_facts"];
       var coolFactList = document.getElementById("coolFactList");
-      while (coolFactList.hasChildNodes()) {
-          coolFactList.removeChild(coolFactList.childNodes[0]);
-      } 
       for (var i = 0; i < coolFacts.length; i++) {
         var coolFactListItem = document.createElement("li");
         coolFactListItem.value = coolFacts[i];
@@ -155,6 +184,7 @@
     }
 
     function showCitiesAndPopulations() {
+      if (!JSON.parse(localStorage.getItem("stateInfo"))[document.getElementById("stateSelectList").value]["cities_populations"]) {return;}
       var citiesPopulationObj = JSON.parse(localStorage.getItem("stateInfo"))[document.getElementById("stateSelectList").value]["cities_populations"];
       var cities = Object.keys(citiesPopulationObj) || [];
       var table = document.getElementById('cityTableBody');
@@ -174,8 +204,23 @@
     function addCityToList() {
       var stateInfoObj = JSON.parse(localStorage.getItem("stateInfo"));
       var state = document.getElementById("stateSelectList").value;
-      stateInfoObj[state]["cities_populations"][document.getElementById('cityInput').value] = document.getElementById('populationInput').value;
+      if (state == "") {return;}
+      if (stateInfoObj[state]) {
+        if (!stateInfoObj[state]["cities_populations"]) {
+          stateInfoObj[state]["cities_populations"] = {};
+        }
+        stateInfoObj[state]["cities_populations"][document.getElementById('cityInput').value] = document.getElementById('populationInput').value;
+
+        localStorage.setItem("stateInfo", JSON.stringify(stateInfoObj));
+      }
+      else {
+        stateInfoObj[state] = {};
+        stateInfoObj[state]["cities_populations"] = {};
+        stateInfoObj[state]["cities_populations"][document.getElementById('cityInput').value] = document.getElementById('populationInput').value;
+      }
+      
       localStorage.setItem("stateInfo", JSON.stringify(stateInfoObj));
+      
       showCitiesAndPopulations();
     }
 
@@ -185,12 +230,10 @@
 
     checkLocalStorage();
     buildStateSelector();
-    populateStateInfo();
-    populateCoolFacts("Alabama");
-    showCitiesAndPopulations();
 
     
     
 
   </script>
+  
 </html>
