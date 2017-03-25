@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style type="text/css">
+    .userInputs {
+      width: 100%;
+      height: 40px;
+      font-size: 24px;
+    }
+    table, th, td {
+        border: 1px solid black;
+        text-align: center;
+    }
+  </style>
+</head>
+<body>
+  
+<div>    
+  <div>
+    <div style="text-align: center; background-color: #78909c; width: 400px; height: 600px">
+      
+      <div id="launchScreen">
+        <h2>Tyler and Nick's Time Tracker</h2>
+        <div>
+          <img src="http://www.kylepholloway.com/wp-content/uploads/2015/10/zip-time-clock-logo-500x355.png" style="max-width: 400px;">
+          <video id="xmlVideo" controls style="max-width: 300px;">
+            <source src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" type="video/mp4">
+          </video>
+          <br>
+          <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px;" onclick="showScreen('welcomeScreen')">Click To Continue</button>
+        </div>
+      </div>
+
+      <div id="welcomeScreen">
+        <div id="userQuestions" style="text-align: left; padding: 20px; width: 90%">
+          First Name:<br>
+          <input class="userInputs" id="fName" type="text" name="firstName"><br>
+          Last Name:<br>
+          <input class="userInputs" id="lName" type="text" name="lastName"><br>
+          Title<br>
+          <input class="userInputs" id="title" type="text" name="firstName"><br>
+          Timezone<br>
+          <select class="userInputs" id="timeZone">
+            <option>Eastern</option>
+            <option>Central</option>
+            <option>Mountain</option>
+            <option>Pacific</option>
+            <option>Alaska/Hawaii</option>
+          </select>
+          User Type<br>
+          <select class="userInputs" id="userType">
+            <option>Administrator</option>
+            <option>Basic User</option>
+          </select>
+        </div>
+        
+        <div id="actions" style="padding-top:100px; width: 100% ">
+          <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px;" onclick="handleNewAccount()">Continue</button>
+          <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px;" onclick="showScreen('launchScreen')">Back to Launch</button>
+        </div>
+      </div>
+
+      <div id="timeRecordingScreen">
+        <div id="greeting"></div>
+        <div id="navActions">
+          <button id="userTypeButton" style="background-color: #00caff; float: left"></button>
+          <button id="logoutButton" style="background-color: #00caff; float: right">Log out</button>
+        </div>
+        <img src="https://lh3.googleusercontent.com/oNd7g4gpujs41uIrjcnVECAEVc14r_Q1YA4A4jdG7DZqKhpZmixH7G3vPWzvp-Qusso=w300" style="height: 40%; width: 100%;">
+        <div id="clockActions">
+          <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px; background-color: #00caff; float: center" onclick="toggleStopWatch()" id="toggleStopWatch">Clock In</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time In</th>
+              <th>Time Out</th>
+              <th>Total Time Worked</th>
+            </tr>
+          </thead>
+          <tbody id="emplTimeRecords">
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+</body>
+
+  <script type="text/javascript">
+
+    // User section
+    var currUser; 
+    var currTimeRecord;
+
+    function TimeRecord() {
+      this.startTime = new Date().getTime();
+      this.endTime = null;
+      this.timeRecordId = new Date().getTime();
+    }
+
+    function User(fName, lName, title, userType) {
+      this.firstName = fName;
+      this.lastName = lName;
+      this.title = title;
+      this.userType = userType;
+      this.emplId = new Date().getTime();
+    }
+    User.prototype.printName = function() {
+        console.log(this.firstName + "" + this.lastName);
+    };
+
+    // Non Privileged User section
+    function NonPrivilegedUser(fName, lName, title, userType) {
+      User.call(this, fName, lName, title, userType );
+    }
+
+    NonPrivilegedUser.prototype = new User();
+
+    // Admin Section
+    function Admin(fName, lName, title, userType) {
+      User.call(this, fName, lName, title, userType );
+      this.getEmployeeTimeRecords = function(emplId) {
+        console.log("Getting other persons records");
+      };
+    }
+    Admin.prototype = new User();
+
+    function launchScreenDisplay() {
+      clearDOM();
+      showScreen("launchScreen");
+      if (!localStorage.getItem("emplTimeRecords")) { localStorage.setItem("emplTimeRecords", "{}")}
+    }
+
+    function clearDOM() {
+      var a = ["launchScreen", "welcomeScreen", "timeRecordingScreen"];
+      a.forEach(function(element, index) {
+        var x = document.getElementById(element);
+        x.style.display = 'none';
+      }); 
+    }
+
+    function showScreen(screen) {
+      clearDOM();
+      var x = document.getElementById(screen);
+      if (x.style.display === 'none') {
+          x.style.display = 'block';
+      } else {
+          x.style.display = 'none';
+      }
+      if (screen == "timeRecordingScreen") {
+        displayTimeRecordingScreen();
+      }
+    }
+
+    function displayTimeRecordingScreen() {
+      var greeting = document.createElement("p");
+      var greetingText = document.createTextNode("Hello, " + currUser.firstName + " " + currUser.lastName + "-" + currUser.title); 
+      greeting.appendChild(greetingText);
+      document.getElementById('greeting').appendChild(greetingText);;
+      document.getElementById('userTypeButton').innerHTML = currUser.userType == "Administrator" ? "View Employees" : "Basic User";
+      showUserRecords();
+    }
+
+    function showUserRecords() {
+      document.getElementById('emplTimeRecords').innerHTML = "";
+      var table = document.getElementById('emplTimeRecords');
+      var emplTimeRecords = getEmplTimeRecords(currUser.emplId);;
+      for (var i = 0; i < emplTimeRecords.length; i++) {
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        var cell0 = row.insertCell(0);
+        var cell1 = row.insertCell(1);
+        cell0.innerHTML = cell0.innerHTML + emplTimeRecords[i].startTime;
+        cell1.innerHTML = cell1.innerHTML + emplTimeRecords[i].endTime;
+      }
+    }
+
+    function getEmplTimeRecords(emplId)
+    {
+      var emplTimeRecords = JSON.parse(localStorage.getItem("emplTimeRecords"));
+      if (emplTimeRecords[emplId]) {return emplTimeRecords[emplId];}
+      return [];
+    }
+
+    function handleNewAccount() {
+      var firstName = document.getElementById("fName").value;
+      var lastName = document.getElementById("lName").value;
+      var title = document.getElementById("title").value;
+      var userType = document.getElementById("userType").value;
+      if (userType == "Administrator") {
+        var newUser = new Admin(firstName, lastName, title, userType);
+      }
+      else {
+        var newUser = new NonPrivilegedUser(firstName, lastName, title, userType);
+      }
+      currUser = newUser;
+      showScreen('timeRecordingScreen');
+    }
+
+    function toggleStopWatch() {
+      if (currTimeRecord == null) {
+        currTimeRecord = new TimeRecord;
+        document.getElementById("toggleStopWatch").innerHTML = "Clock Out";
+      }
+      else {
+        currTimeRecord.endTime = new Date().getTime(); 
+        emplTimeRecords = getEmplTimeRecords(currUser.emplId);
+        emplTimeRecords.push(currTimeRecord);
+        allTimeRecords = JSON.parse(localStorage.getItem("emplTimeRecords"));
+        allTimeRecords[currUser.emplId] = emplTimeRecords;
+        localStorage.setItem("emplTimeRecords", JSON.stringify(allTimeRecords));
+        console.log(JSON.parse(localStorage.getItem("emplTimeRecords")));
+        document.getElementById("toggleStopWatch").innerHTML = "Clock In";
+        showUserRecords();
+        currTimeRecord = null;
+      }
+      
+    }
+
+    launchScreenDisplay();
+
+  </script>
+</html>
