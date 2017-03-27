@@ -13,6 +13,11 @@
         border: 1px solid black;
         text-align: center;
     }
+    .openingTransition {
+      transition-property: background;
+      transition-duration: 3s;
+      background: black;
+    }
   </style>
 </head>
 <body>
@@ -134,6 +139,8 @@
     function launchScreenDisplay() {
       clearDOM();
       showScreen("launchScreen");
+      var x = document.getElementById("launchScreen");
+      x.className = "openingTransition";
       if (!localStorage.getItem("emplTimeRecords")) { localStorage.setItem("emplTimeRecords", "{}")}
     }
 
