@@ -18,6 +18,15 @@
       transition-duration: 3s;
       background: black;
     }
+    .glowing {
+      animation-name: glowing;
+      animation-duration: 1s;
+      animation-play-state: running;
+    }
+    @keyframes glowing{
+      from {transform: scale(1.0);}
+      to {transform: scale(1.1);}
+    }
   </style>
 </head>
 <body>
@@ -29,12 +38,12 @@
       <div id="launchScreen">
         <h2>Tyler and Nick's Time Tracker</h2>
         <div>
-          <img src="http://www.kylepholloway.com/wp-content/uploads/2015/10/zip-time-clock-logo-500x355.png" style="max-width: 400px;">
+          <img id="image-big" src="http://www.kylepholloway.com/wp-content/uploads/2015/10/zip-time-clock-logo-500x355.png" style="max-width: 400px;">
           <video id="xmlVideo" controls style="max-width: 300px;">
             <source src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" type="video/mp4">
           </video>
           <br>
-          <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px;" onclick="showScreen('welcomeScreen')">Click To Continue</button>
+          <button id="launchContinue" style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px;" onclick="showScreen('welcomeScreen')">Click To Continue</button>
         </div>
       </div>
 
@@ -98,10 +107,13 @@
 </body>
 
   <script type="text/javascript">
-
     // User section
     var currUser; 
     var currTimeRecord;
+    var c = document.getElementById("image-big"); //Tyler
+    c.addEventListener("touchstart", glowTime(c)); //Tyler
+    c.addEventListener("touchend", glowTimeStop(c)); //Tyler
+    c.addEventListener("touchcancel", glowTimeStop(c)); //Tyler
 
     function TimeRecord() {
       this.startTime = new Date().getTime();
@@ -139,9 +151,17 @@
     function launchScreenDisplay() {
       clearDOM();
       showScreen("launchScreen");
-      var x = document.getElementById("launchScreen");
-      x.className = "openingTransition";
+      var x = document.getElementById("launchScreen"); //Tyler
+      x.className = "openingTransition"; //Tyler
       if (!localStorage.getItem("emplTimeRecords")) { localStorage.setItem("emplTimeRecords", "{}")}
+    }
+
+    function glowTime(x){
+        x.className = "glowing";
+    }
+
+    function glowTimeStop(x){
+        x.classList.remove("glowing");
     }
 
     function clearDOM() {
@@ -163,9 +183,13 @@
       if (screen == "timeRecordingScreen") {
         displayTimeRecordingScreen();
       }
+      if (screen == 'welcomeScreen'){
+          getTimeZones();
+      }
     }
 
     function displayTimeRecordingScreen() {
+
       var greeting = document.createElement("p");
       var greetingText = document.createTextNode("Hello, " + currUser.firstName + " " + currUser.lastName + "-" + currUser.title); 
       greeting.appendChild(greetingText);
@@ -231,6 +255,21 @@
     }
 
     launchScreenDisplay();
+    
+    function getTimeZones() { //Tyler
+        var timeRequest = new XMLHttpRequest();
+        timeRequest.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200){
+                console.log(this);
+            }
+        }
+
+        var url1 = "http://api.timezonedb.com/v2/get-time-zone?key=9E6K4SEAY5TL&format=json&by=zone&zone=-03";
+        var url2 = "http://api.timezonedb.com/v2/list-time-zone?key=9E6K4SEAY5TL&format=json&country=US"
+        timeRequest.open("GET", url2, true);
+        timeRequest.send();
+    }
+
 
   </script>
 </html>
