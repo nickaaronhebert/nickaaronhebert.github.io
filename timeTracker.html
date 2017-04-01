@@ -13,20 +13,42 @@
         border: 1px solid black;
         text-align: center;
     }
-    .openingTransition {
+
+    <!-- Tyler Start - Transition and Animation -->
+    .transition {
       transition-property: background;
-      transition-duration: 3s;
+    }
+
+    .transition:hover{
       background: black;
     }
+
     .glowing {
-      animation-name: glowing;
-      animation-duration: 1s;
-      animation-play-state: running;
+      -webkit-animation-name: glowing;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-play-state: running;
     }
     @keyframes glowing{
       from {transform: scale(1.0);}
       to {transform: scale(1.1);}
     }
+
+
+    .timeClockPulse {
+      -webkit-animation-name: clockPulse;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-play-state: running;
+      -webkit-animation-timing-function: ease-in-out;
+      -webkit-animation-direction: alternate;
+      -webkit-animation-iteration-count: infinite;
+    }
+
+    @keyframes clockPulse{
+      from {transform: scale(1.0);}
+      to {transform: scale(1.5);}
+    }
+
+    <!-- Tyler End -->
   </style>
 </head>
 <body>
@@ -35,7 +57,7 @@
   <div>
     <div style="text-align: center; background-color: #78909c; width: 400px; height: 600px">
       
-      <div id="launchScreen">
+      <div class="transition" id="launchScreen">
         <h2>Tyler and Nick's Time Tracker</h2>
         <div>
           <img id="image-big" src="http://www.kylepholloway.com/wp-content/uploads/2015/10/zip-time-clock-logo-500x355.png" style="max-width: 400px;">
@@ -57,11 +79,11 @@
           <input class="userInputs" id="title" type="text" name="firstName"><br>
           Timezone<br>
           <select class="userInputs" id="timeZone">
-            <option>Eastern</option>
-            <option>Central</option>
-            <option>Mountain</option>
-            <option>Pacific</option>
-            <option>Alaska/Hawaii</option>
+            <option value="EDT">Eastern</option>
+            <option value="CDT">Central</option>
+            <option value="MST">Mountain</option>
+            <option value="PST">Pacific</option>
+            <option value="AKDT">Alaska/Hawaii</option>
           </select>
           User Type<br>
           <select class="userInputs" id="userType">
@@ -82,7 +104,7 @@
           <button id="userTypeButton" style="background-color: #00caff; float: left"></button>
           <button id="logoutButton" style="background-color: #00caff; float: right">Log out</button>
         </div>
-        <img src="https://lh3.googleusercontent.com/oNd7g4gpujs41uIrjcnVECAEVc14r_Q1YA4A4jdG7DZqKhpZmixH7G3vPWzvp-Qusso=w300" style="height: 40%; width: 100%;">
+        <canvas id="timeClockCanvas"></canvas>
         <div id="clockActions">
           <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px; background-color: #00caff; float: center" onclick="toggleStopWatch()" id="toggleStopWatch">Clock In</button>
         </div>
@@ -108,6 +130,8 @@
 
   <script type="text/javascript">
     // User section
+    var timeZone;
+    var timeZoneData;
     var currUser; 
     var currTimeRecord;
     var c = document.getElementById("image-big"); //Tyler
@@ -151,16 +175,14 @@
     function launchScreenDisplay() {
       clearDOM();
       showScreen("launchScreen");
-      var x = document.getElementById("launchScreen"); //Tyler
-      x.className = "openingTransition"; //Tyler
       if (!localStorage.getItem("emplTimeRecords")) { localStorage.setItem("emplTimeRecords", "{}")}
     }
 
-    function glowTime(x){
+    function glowTime(x){ //Tyler
         x.className = "glowing";
     }
 
-    function glowTimeStop(x){
+    function glowTimeStop(x){ //Tyler
         x.classList.remove("glowing");
     }
 
@@ -181,21 +203,31 @@
           x.style.display = 'none';
       }
       if (screen == "timeRecordingScreen") {
-        displayTimeRecordingScreen();
+          getTimeZone();
+
+          displayTimeRecordingScreen();
       }
       if (screen == 'welcomeScreen'){
-          getTimeZones();
       }
     }
 
     function displayTimeRecordingScreen() {
-
+        drawTimeClock();
       var greeting = document.createElement("p");
-      var greetingText = document.createTextNode("Hello, " + currUser.firstName + " " + currUser.lastName + "-" + currUser.title); 
+      var greetingText = document.createTextNode("Hello, " + currUser.firstName + " " + currUser.lastName + "-" + currUser.title);
       greeting.appendChild(greetingText);
-      document.getElementById('greeting').appendChild(greetingText);;
+      document.getElementById('greeting').appendChild(greetingText);
       document.getElementById('userTypeButton').innerHTML = currUser.userType == "Administrator" ? "View Employees" : "Basic User";
       showUserRecords();
+    }
+
+    function drawTimeClock(){//Tyler
+        var canvas = document.getElementById('timeClockCanvas');
+        var clock = canvas.getContext('2d');
+        clock.beginPath();
+        clock.fillStyle="#FFFFFF";
+        clock.fillRect(20,20,250,100);
+        clock.stroke();
     }
 
     function showUserRecords() {
@@ -238,8 +270,10 @@
       if (currTimeRecord == null) {
         currTimeRecord = new TimeRecord;
         document.getElementById("toggleStopWatch").innerHTML = "Clock Out";
+        document.getElementById("timeClockCanvas").className = "timeClockPulse"; //Tyler - just this line
       }
       else {
+          document.getElementById("timeClockCanvas").classList.remove; //Tyler - just this line
         currTimeRecord.endTime = new Date().getTime(); 
         emplTimeRecords = getEmplTimeRecords(currUser.emplId);
         emplTimeRecords.push(currTimeRecord);
@@ -255,21 +289,25 @@
     }
 
     launchScreenDisplay();
-    
-    function getTimeZones() { //Tyler
+
+    function getTimeZone() { //Tyler
+        timeZone = document.getElementById('timeZone').value;
         var timeRequest = new XMLHttpRequest();
         timeRequest.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200){
-                console.log(this);
+                timeZoneData = JSON.stringify(this.responseText); //double STRINGIFY
+                console.log(timeZoneData);
+                timeZoneData = JSON.parse(timeZoneData);//and Back again
+                timeZoneData = JSON.parse(timeZoneData);//and one last time to get the actual parsed info
+                console.log(timeZoneData);
+                document.getElementById('greeting').innerHTML += "You signed in at " + timeZoneData.formatted;
             }
         }
 
-        var url1 = "http://api.timezonedb.com/v2/get-time-zone?key=9E6K4SEAY5TL&format=json&by=zone&zone=-03";
-        var url2 = "http://api.timezonedb.com/v2/list-time-zone?key=9E6K4SEAY5TL&format=json&country=US"
-        timeRequest.open("GET", url2, true);
+        var url1 = "http://api.timezonedb.com/v2/get-time-zone?key=9E6K4SEAY5TL&format=json&by=zone&zone=" + timeZone;
+        timeRequest.open("GET", url1, true);
         timeRequest.send();
     }
-
 
   </script>
 </html>
