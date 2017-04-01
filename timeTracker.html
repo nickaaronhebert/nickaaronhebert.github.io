@@ -79,11 +79,11 @@
           <input class="userInputs" id="title" type="text" name="firstName"><br>
           Timezone<br>
           <select class="userInputs" id="timeZone">
-            <option value="EDT">Eastern</option>
-            <option value="CDT">Central</option>
-            <option value="MST">Mountain</option>
-            <option value="PST">Pacific</option>
-            <option value="AKDT">Alaska/Hawaii</option>
+            <option id="America/New_York">Eastern</option>
+            <option id="America/Chicago">Central</option>
+            <option id="America/Denver">Mountain</option>
+            <option id="America/Los_Angeles">Pacific</option>
+            <option id="Pacific/Honolulu">Hawaii</option>
           </select>
           User Type<br>
           <select class="userInputs" id="userType">
@@ -111,7 +111,6 @@
         <table>
           <thead>
             <tr>
-              <th>Date</th>
               <th>Time In</th>
               <th>Time Out</th>
               <th>Total Time Worked</th>
@@ -139,17 +138,22 @@
     c.addEventListener("touchend", glowTimeStop(c)); //Tyler
     c.addEventListener("touchcancel", glowTimeStop(c)); //Tyler
 
-    function TimeRecord() {
-      this.startTime = new Date().getTime();
+    function TimeRecord(timeObj) { //Nick
+      this.startTime = timeObj["timestamp"];
       this.endTime = null;
       this.timeRecordId = new Date().getTime();
+      this.startTimeString = timeObj["formatted"];
+      this.timezoneAbbr = timeObj["abbreviation"];
+      this.endTimeString = null;
+      this.timeDiff = null;
     }
 
-    function User(fName, lName, title, userType) {
+    function User(fName, lName, title, userType, timeZone) { //Nick
       this.firstName = fName;
       this.lastName = lName;
       this.title = title;
       this.userType = userType;
+      this.timeZone = timeZone;
       this.emplId = new Date().getTime();
     }
     User.prototype.printName = function() {
@@ -157,15 +161,15 @@
     };
 
     // Non Privileged User section
-    function NonPrivilegedUser(fName, lName, title, userType) {
-      User.call(this, fName, lName, title, userType );
+    function NonPrivilegedUser(fName, lName, title, userType, timeZone) { //Nick
+      User.call(this, fName, lName, title, userType, timeZone );
     }
 
     NonPrivilegedUser.prototype = new User();
 
     // Admin Section
-    function Admin(fName, lName, title, userType) {
-      User.call(this, fName, lName, title, userType );
+    function Admin(fName, lName, title, userType, timeZone) { //Nick 
+      User.call(this, fName, lName, title, userType, timeZone );
       this.getEmployeeTimeRecords = function(emplId) {
         console.log("Getting other persons records");
       };
@@ -203,16 +207,17 @@
           x.style.display = 'none';
       }
       if (screen == "timeRecordingScreen") {
-          getTimeZone();
+          getTimeZones();
 
           displayTimeRecordingScreen();
       }
       if (screen == 'welcomeScreen'){
+
       }
     }
 
     function displayTimeRecordingScreen() {
-        drawTimeClock();
+      drawTimeClock();
       var greeting = document.createElement("p");
       var greetingText = document.createTextNode("Hello, " + currUser.firstName + " " + currUser.lastName + "-" + currUser.title);
       greeting.appendChild(greetingText);
@@ -230,7 +235,7 @@
         clock.stroke();
     }
 
-    function showUserRecords() {
+    function showUserRecords() { //Nick
       document.getElementById('emplTimeRecords').innerHTML = "";
       var table = document.getElementById('emplTimeRecords');
       var emplTimeRecords = getEmplTimeRecords(currUser.emplId);;
@@ -239,8 +244,8 @@
         var row = table.insertRow(rowCount);
         var cell0 = row.insertCell(0);
         var cell1 = row.insertCell(1);
-        cell0.innerHTML = cell0.innerHTML + emplTimeRecords[i].startTime;
-        cell1.innerHTML = cell1.innerHTML + emplTimeRecords[i].endTime;
+        cell0.innerHTML = cell0.innerHTML + emplTimeRecords[i].startTimeString;
+        cell1.innerHTML = cell1.innerHTML + emplTimeRecords[i].endTimeString;
       }
     }
 
@@ -251,36 +256,41 @@
       return [];
     }
 
-    function handleNewAccount() {
+    function handleNewAccount() { //Nick 
       var firstName = document.getElementById("fName").value;
       var lastName = document.getElementById("lName").value;
       var title = document.getElementById("title").value;
       var userType = document.getElementById("userType").value;
+      var timeZoneSelect = document.getElementById("timeZone");
+      var selectedTZ = timeZoneSelect.options[timeZoneSelect.selectedIndex];
+      var timeZone = selectedTZ.getAttribute("id");
       if (userType == "Administrator") {
-        var newUser = new Admin(firstName, lastName, title, userType);
+        var newUser = new Admin(firstName, lastName, title, userType, timeZone);
       }
       else {
-        var newUser = new NonPrivilegedUser(firstName, lastName, title, userType);
+        var newUser = new NonPrivilegedUser(firstName, lastName, title, userType, timeZone);
       }
       currUser = newUser;
       showScreen('timeRecordingScreen');
     }
 
-    function toggleStopWatch() {
+    function toggleStopWatch() { //Nick
       if (currTimeRecord == null) {
-        currTimeRecord = new TimeRecord;
+        currTimeRecord = new TimeRecord(getTimeObj());
         document.getElementById("toggleStopWatch").innerHTML = "Clock Out";
         document.getElementById("timeClockCanvas").className = "timeClockPulse"; //Tyler - just this line
       }
       else {
-          document.getElementById("timeClockCanvas").classList.remove; //Tyler - just this line
-        currTimeRecord.endTime = new Date().getTime(); 
+        debugger;
+        document.getElementById("timeClockCanvas").classList.remove('timeClockPulse'); //Tyler - just this line
+        var timeObj = getTimeObj();
+        currTimeRecord.endTime = timeObj["timestamp"];
+        currTimeRecord.endTimeString = timeObj["formatted"];
         emplTimeRecords = getEmplTimeRecords(currUser.emplId);
         emplTimeRecords.push(currTimeRecord);
         allTimeRecords = JSON.parse(localStorage.getItem("emplTimeRecords"));
         allTimeRecords[currUser.emplId] = emplTimeRecords;
         localStorage.setItem("emplTimeRecords", JSON.stringify(allTimeRecords));
-        console.log(JSON.parse(localStorage.getItem("emplTimeRecords")));
         document.getElementById("toggleStopWatch").innerHTML = "Clock In";
         showUserRecords();
         currTimeRecord = null;
@@ -290,23 +300,34 @@
 
     launchScreenDisplay();
 
-    function getTimeZone() { //Tyler
-        timeZone = document.getElementById('timeZone').value;
+    function getTimeZones() { //Tyler
         var timeRequest = new XMLHttpRequest();
         timeRequest.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200){
-                timeZoneData = JSON.stringify(this.responseText); //double STRINGIFY
-                console.log(timeZoneData);
-                timeZoneData = JSON.parse(timeZoneData);//and Back again
-                timeZoneData = JSON.parse(timeZoneData);//and one last time to get the actual parsed info
-                console.log(timeZoneData);
-                document.getElementById('greeting').innerHTML += "You signed in at " + timeZoneData.formatted;
+                console.log(this);
             }
         }
-
-        var url1 = "http://api.timezonedb.com/v2/get-time-zone?key=9E6K4SEAY5TL&format=json&by=zone&zone=" + timeZone;
-        timeRequest.open("GET", url1, true);
+        var url1 = "http://api.timezonedb.com/v2/get-time-zone?key=9E6K4SEAY5TL&format=json&by=zone&zone=-03";
+        var url2 = "http://api.timezonedb.com/v2/list-time-zone?key=9E6K4SEAY5TL&format=json&country=US"
+        timeRequest.open("GET", url2, true);
         timeRequest.send();
+    }
+
+    function getTimeObj() {
+      var API_STRING = "http://api.timezonedb.com/v2/get-time-zone?key=YTFTTRWRDEY7&format=json&by=zone&zone=" + currUser.timeZone;
+      var xhr = new XMLHttpRequest();
+      try{
+        xhr.open("GET", API_STRING, false);
+        xhr.send();  
+        var timeZoneObject = JSON.parse(xhr.response);
+        return timeZoneObject;  
+      }
+      catch(err){
+        document.getElementById("errorDiv").innerHTML += "An error occured while trying to retrieve the resource: "
+         + err.description;
+      }
+
+      
     }
 
   </script>
