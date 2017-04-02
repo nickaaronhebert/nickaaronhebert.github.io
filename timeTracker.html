@@ -254,7 +254,7 @@
         document.getElementById("image-big").classList.remove("transition");
     }
 
-    function clearDOM() {
+    function clearDOM() {//Nick
       var a = ["launchScreen", "welcomeScreen", "timeRecordingScreen", "adminScreen"];
       a.forEach(function(element, index) {
         var x = document.getElementById(element);
@@ -503,7 +503,7 @@
         return totalTime;
     }
     
-    function getTimeObj() {
+    function getTimeObj() {//Nick
       var API_STRING = "http://api.timezonedb.com/v2/get-time-zone?key=YTFTTRWRDEY7&format=json&by=zone&zone=" + currUser.timeZone;
       var xhr = new XMLHttpRequest();
       try{
