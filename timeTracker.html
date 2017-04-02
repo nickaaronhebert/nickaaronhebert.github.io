@@ -20,6 +20,15 @@
       -webkit-transition-duration: 4s;
       background: black;
     }
+    
+    .transition2 {
+      -webkit-transition-property: background;
+      -webkit-transition-duration: 4s;
+    }
+    
+    .transition2:hover {
+      background: red;
+    }
 
     .glowing {
       -webkit-animation-name: glowing;
@@ -69,6 +78,12 @@
 
       <div id="welcomeScreen">
         <div id="userQuestions" style="text-align: left; padding: 20px; width: 90%">
+          Login in as:<br>
+          <select class="userInputs" id="usersList" onchange="loginUser()">
+            <option></option>
+          </select>
+          -- or -- <br>
+          New Account <br>
           First Name:<br>
           <input class="userInputs" id="fName" type="text" name="firstName"><br>
           Last Name:<br>
@@ -77,11 +92,11 @@
           <input class="userInputs" id="title" type="text" name="firstName"><br>
           Timezone<br>
           <select class="userInputs" id="timeZone">
-            <option value="EDT">Eastern</option>
-            <option value="CDT">Central</option>
-            <option value="MST">Mountain</option>
-            <option value="PST">Pacific</option>
-            <option value="AKDT">Alaska/Hawaii</option>
+            <option id="America/New_York">Eastern</option>
+            <option id="America/Chicago">Central</option>
+            <option id="America/Denver">Mountain</option>
+            <option id="America/Los_Angeles">Pacific</option>
+            <option id="Pacific/Honolulu">Hawaii</option>
           </select>
           User Type<br>
           <select class="userInputs" id="userType">
@@ -90,26 +105,27 @@
           </select>
         </div>
         
-        <div id="actions" style="padding-top:100px; width: 100% ">
+        <div id="actions" style="padding-top:0px; width: 100% ">
           <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px;" onclick="handleNewAccount()">Continue</button>
           <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px;" onclick="showScreen('launchScreen')">Back to Launch</button>
         </div>
       </div>
 
       <div id="timeRecordingScreen">
-        <div id="greeting"></div>
+        <div id="recordGreeting"></div>
         <div id="navActions">
-          <button id="userTypeButton" style="background-color: #00caff; float: left"></button>
-          <button id="logoutButton" style="background-color: #00caff; float: right">Log out</button>
+          <button id="userTypeButton" style="background-color: #00caff; float: left" onclick='showScreen("adminScreen")'>Employee Records</button>
+          <button id="logoutButton" style="background-color: #00caff; float: right" onclick="showScreen('launchScreen')">Log out</button>
         </div>
         <canvas id="timeClockCanvas"></canvas>
         <div id="clockActions">
           <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px; background-color: #00caff; float: center" onclick="toggleStopWatch()" id="toggleStopWatch">Clock In</button>
+          <br>
         </div>
+        <div style="height:300px;overflow:auto;">
         <table>
           <thead>
             <tr>
-              <th>Date</th>
               <th>Time In</th>
               <th>Time Out</th>
               <th>Total Time Worked</th>
@@ -118,8 +134,45 @@
           <tbody id="emplTimeRecords">
           </tbody>
         </table>
+        </div>
       </div>
-      
+
+      <div id="adminScreen">
+        <div id="adminGreeting"></div>
+        <div id="navActions">
+          <button id="userTypeButton" style="background-color: #00caff; float: left" onclick='showScreen("timeRecordingScreen")'>My Timesheet</button>
+          <button id="logoutButton" style="background-color: #00caff; float: right" onclick="showScreen('launchScreen')">Log out</button>
+          <br><br>
+          <div style="height:200px;overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Time Zone</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="emplTable">
+              </tbody>
+            </table>
+          </div>
+          <div style="height:200px;overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time In</th>
+                  <th>Time Out</th>
+                  <th>Total Time Worked</th>
+                </tr>
+              </thead>
+              <tbody id="emplTimeRecordsAdmin">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -136,6 +189,8 @@
 
     document.addEventListener("DOMContentLoaded", init);
 
+    launchScreenDisplay();
+    
     function init(){//tyler
     var c = document.getElementById("image-big"); //Tyler
     c.addEventListener("touchstart", glowTime); //Tyler
@@ -143,17 +198,22 @@
     c.addEventListener("touchcancel", glowTimeStop); //Tyler
     }
 
-    function TimeRecord() {
-      this.startTime = new Date().getTime();
+    function TimeRecord(timeObj) { //Nick
+      this.startTime = timeObj["timestamp"];
       this.endTime = null;
       this.timeRecordId = new Date().getTime();
+      this.startTimeString = timeObj["formatted"];
+      this.timezoneAbbr = timeObj["abbreviation"];
+      this.endTimeString = null;
+      this.timeDiff = null;
     }
 
-    function User(fName, lName, title, userType) {
+    function User(fName, lName, title, userType, timeZone) { //Nick
       this.firstName = fName;
       this.lastName = lName;
       this.title = title;
       this.userType = userType;
+      this.timeZone = timeZone;
       this.emplId = new Date().getTime();
     }
     User.prototype.printName = function() {
@@ -161,15 +221,15 @@
     };
 
     // Non Privileged User section
-    function NonPrivilegedUser(fName, lName, title, userType) {
-      User.call(this, fName, lName, title, userType );
+    function NonPrivilegedUser(fName, lName, title, userType, timeZone) { //Nick
+      User.call(this, fName, lName, title, userType, timeZone );
     }
 
     NonPrivilegedUser.prototype = new User();
 
     // Admin Section
-    function Admin(fName, lName, title, userType) {
-      User.call(this, fName, lName, title, userType );
+    function Admin(fName, lName, title, userType, timeZone) { //Nick 
+      User.call(this, fName, lName, title, userType, timeZone );
       this.getEmployeeTimeRecords = function(emplId) {
         console.log("Getting other persons records");
       };
@@ -180,6 +240,7 @@
       clearDOM();
       showScreen("launchScreen");
       if (!localStorage.getItem("emplTimeRecords")) { localStorage.setItem("emplTimeRecords", "{}")}
+      if (!localStorage.getItem("timeUsers")) { localStorage.setItem("timeUsers", "[]")}
     }
 
     function glowTime(){ //Tyler
@@ -195,14 +256,14 @@
     }
 
     function clearDOM() {
-      var a = ["launchScreen", "welcomeScreen", "timeRecordingScreen"];
+      var a = ["launchScreen", "welcomeScreen", "timeRecordingScreen", "adminScreen"];
       a.forEach(function(element, index) {
         var x = document.getElementById(element);
         x.style.display = 'none';
       }); 
     }
 
-    function showScreen(screen) {
+    function showScreen(screen) {//Nick
       clearDOM();
       var x = document.getElementById(screen);
       if (x.style.display === 'none') {
@@ -211,22 +272,89 @@
           x.style.display = 'none';
       }
       if (screen == "timeRecordingScreen") {
-          getTimeZone();
-
-          displayTimeRecordingScreen();
+        getTimeZones();
+        displayTimeRecordingScreen();
       }
-      if (screen == 'welcomeScreen'){
+      else if (screen == 'welcomeScreen') {
+        displayWelcomeScreen();
+      }
+      else if (screen == 'adminScreen'){
+        if (currUser.userType == "Administrator") {
+          displayAdminScreen();
+        }
+        else {
+          alert("This user is not an admin. You may not view other employee records."); 
+          showScreen("timeRecordingScreen");
+        }
       }
     }
 
-    function displayTimeRecordingScreen() {
-        drawTimeClock();
+    function loginUser(user) {//Nick
+      var user = document.getElementById("usersList").value;
+      if (user != "") {
+        var users = JSON.parse(localStorage.getItem("timeUsers"));
+        for (var i = 0; i < users.length; i++)
+        {
+          if (users[i].firstName == user.split(" ")[0] && users[i].lastName == user.split(" ")[1] ) {
+            currUser = users[i];
+            showScreen("timeRecordingScreen");
+          }
+        }
+      }
+    }
+
+    function displayWelcomeScreen() {//Nick
+      document.getElementById('welcomeScreen').className = "transition2";
+      document.getElementById('usersList').innerHTML = '';
+      var option = document.createElement("option");
+      document.getElementById("usersList").appendChild(option);
+      var users = JSON.parse(localStorage.getItem("timeUsers"));
+      for (var i = 0; i < users.length; i++)
+      {
+        var option = document.createElement("option");
+        option.innerHTML = users[i].firstName + " " + users[i].lastName;
+        document.getElementById("usersList").appendChild(option);
+      }
+
+    }
+
+    function displayGreetingMessage(element) {//Nick
+      document.getElementById(element).innerHTML = '';
       var greeting = document.createElement("p");
       var greetingText = document.createTextNode("Hello, " + currUser.firstName + " " + currUser.lastName + "-" + currUser.title);
       greeting.appendChild(greetingText);
-      document.getElementById('greeting').appendChild(greetingText);
-      document.getElementById('userTypeButton').innerHTML = currUser.userType == "Administrator" ? "View Employees" : "Basic User";
+      document.getElementById(element).appendChild(greetingText);
+    }
+
+    function displayTimeRecordingScreen() {//Nick
+      drawTimeClock();
+      displayGreetingMessage("recordGreeting");
       showUserRecords();
+    }
+
+    function displayAdminScreen() {//Nick
+      displayGreetingMessage("adminGreeting");
+      showUsersTable();
+      return; 
+    }
+
+    function showUsersTable() {//Nick
+      document.getElementById('emplTable').innerHTML = "";
+      var table = document.getElementById('emplTable');
+      var employees = JSON.parse(localStorage.getItem("timeUsers"));
+      for (var i = 0; i < employees.length; i++) {
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        var cell0 = row.insertCell(0);
+        var cell1 = row.insertCell(1);
+        var cell2 = row.insertCell(2);
+        var cell3 = row.insertCell(3);
+        cell0.innerHTML = cell0.innerHTML + employees[i].firstName;
+        cell1.innerHTML = cell1.innerHTML + employees[i].lastName;
+        cell2.innerHTML = cell2.innerHTML + employees[i].timeZone;
+        cell3.innerHTML = "<button onclick='viewEmplRecordsAdmin(" + employees[i].emplId + ")'> View Records </button>"  ;
+      }
+      return;
     }
 
     function drawTimeClock(){//Tyler
@@ -239,7 +367,23 @@
         clock.stroke();
     }
 
-    function showUserRecords() {
+    function viewEmplRecordsAdmin(emplID) {//Nick
+      document.getElementById('emplTimeRecordsAdmin').innerHTML = "";
+      var table = document.getElementById('emplTimeRecordsAdmin');
+      var emplTimeRecords = getEmplTimeRecords(emplID);;
+      for (var i = 0; i < emplTimeRecords.length; i++) {
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        var cell0 = row.insertCell(0);
+        var cell1 = row.insertCell(1);
+        var cell2 = row.insertCell(2);
+        cell0.innerHTML = cell0.innerHTML + emplTimeRecords[i].startTimeString;
+        cell1.innerHTML = cell1.innerHTML + emplTimeRecords[i].endTimeString;
+        cell2.innerHTML = cell2.innerHTML + emplTimeRecords[i].timeDiff + " Hours";
+      }
+    }
+
+    function showUserRecords() { //Nick
       document.getElementById('emplTimeRecords').innerHTML = "";
       var table = document.getElementById('emplTimeRecords');
       var emplTimeRecords = getEmplTimeRecords(currUser.emplId);;
@@ -248,77 +392,71 @@
         var row = table.insertRow(rowCount);
         var cell0 = row.insertCell(0);
         var cell1 = row.insertCell(1);
-        cell0.innerHTML = cell0.innerHTML + emplTimeRecords[i].startTime;
-        cell1.innerHTML = cell1.innerHTML + emplTimeRecords[i].endTime;
+        var cell2 = row.insertCell(2);
+        cell0.innerHTML = cell0.innerHTML + emplTimeRecords[i].startTimeString;
+        cell1.innerHTML = cell1.innerHTML + emplTimeRecords[i].endTimeString;
+        cell2.innerHTML = cell2.innerHTML + emplTimeRecords[i].timeDiff + " Hours";
       }
     }
 
-    function getEmplTimeRecords(emplId)
+    function getEmplTimeRecords(emplId)//Nick
     {
       var emplTimeRecords = JSON.parse(localStorage.getItem("emplTimeRecords"));
       if (emplTimeRecords[emplId]) {return emplTimeRecords[emplId];}
       return [];
     }
 
-    function handleNewAccount() {
+    function handleNewAccount() { //Nick 
       var firstName = document.getElementById("fName").value;
       var lastName = document.getElementById("lName").value;
       var title = document.getElementById("title").value;
       var userType = document.getElementById("userType").value;
+      var timeZoneSelect = document.getElementById("timeZone");
+      var selectedTZ = timeZoneSelect.options[timeZoneSelect.selectedIndex];
+      var timeZone = selectedTZ.getAttribute("id");
       if (userType == "Administrator") {
-        var newUser = new Admin(firstName, lastName, title, userType);
+        var newUser = new Admin(firstName, lastName, title, userType, timeZone);
       }
       else {
-        var newUser = new NonPrivilegedUser(firstName, lastName, title, userType);
+        var newUser = new NonPrivilegedUser(firstName, lastName, title, userType, timeZone);
       }
       currUser = newUser;
+      var timeUsers = JSON.parse(localStorage.getItem("timeUsers"));
+      debugger;
+      timeUsers.push(currUser);
+      localStorage.setItem("timeUsers", JSON.stringify(timeUsers));
       showScreen('timeRecordingScreen');
     }
 
-    function toggleStopWatch() {
+    function toggleStopWatch() { //Nick
       if (currTimeRecord == null) {
-        currTimeRecord = new TimeRecord;
         breakInterval = false;
         displayCounter();
+        currTimeRecord = new TimeRecord(getTimeObj());
         document.getElementById("toggleStopWatch").innerHTML = "Clock Out";
         document.getElementById("timeClockCanvas").className = "timeClockPulse"; //Tyler
       }
       else {
-          document.getElementById("timeClockCanvas").classList.remove('timeClockPulse'); //Tyler
-          breakInterval = true;
-        currTimeRecord.endTime = new Date().getTime(); 
+        document.getElementById("timeClockCanvas").classList.remove('timeClockPulse'); //Tyler
+        breakInterval = true;
+        var timeObj = getTimeObj();
+        currTimeRecord.endTime = timeObj["timestamp"];
+        currTimeRecord.endTimeString = timeObj["formatted"];
+        var clockIn = new Date(currTimeRecord.startTime * 1000);
+        var clockOut = new Date(currTimeRecord.endTime * 1000);
+        var diffMs = (clockOut - clockIn);
+        var diffMins = ((((diffMs % 86400000) % 3600000) / 60000 )/ 60).toFixed(2);
+        currTimeRecord.timeDiff = diffMins;
         emplTimeRecords = getEmplTimeRecords(currUser.emplId);
         emplTimeRecords.push(currTimeRecord);
         allTimeRecords = JSON.parse(localStorage.getItem("emplTimeRecords"));
         allTimeRecords[currUser.emplId] = emplTimeRecords;
         localStorage.setItem("emplTimeRecords", JSON.stringify(allTimeRecords));
-        console.log(JSON.parse(localStorage.getItem("emplTimeRecords")));
         document.getElementById("toggleStopWatch").innerHTML = "Clock In";
         showUserRecords();
         currTimeRecord = null;
       }
       
-    }
-
-    launchScreenDisplay();
-
-    function getTimeZone() { //Tyler
-        timeZone = document.getElementById('timeZone').value;
-        var timeRequest = new XMLHttpRequest();
-        timeRequest.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200){
-                timeZoneData = JSON.stringify(this.responseText); //double STRINGIFY
-                console.log(timeZoneData);
-                timeZoneData = JSON.parse(timeZoneData);//and Back again
-                timeZoneData = JSON.parse(timeZoneData);//and one last time to get the actual parsed info
-                console.log(timeZoneData);
-                document.getElementById('greeting').innerHTML += "You signed in at " + timeZoneData.formatted;
-            }
-        }
-
-        var url1 = "http://api.timezonedb.com/v2/get-time-zone?key=9E6K4SEAY5TL&format=json&by=zone&zone=" + timeZone;
-        timeRequest.open("GET", url1, true);
-        timeRequest.send();
     }
 
     function displayCounter(){//Tyler
@@ -365,6 +503,39 @@
         }
         return totalTime;
     }
+    
+    function getTimeObj() {
+      var API_STRING = "http://api.timezonedb.com/v2/get-time-zone?key=YTFTTRWRDEY7&format=json&by=zone&zone=" + currUser.timeZone;
+      var xhr = new XMLHttpRequest();
+      try{
+        xhr.open("GET", API_STRING, false);
+        xhr.send();  
+        var timeZoneObject = JSON.parse(xhr.response);
+        return timeZoneObject;  
+      }
+      catch(err){
+        document.getElementById("errorDiv").innerHTML += "An error occured while trying to retrieve the resource: "
+         + err.description;
+      }
+    }
+    
+    function getTimeZone() { //Tyler
+        timeZone = document.getElementById('timeZone').value;
+        var timeRequest = new XMLHttpRequest();
+        timeRequest.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200){
+                timeZoneData = JSON.stringify(this.responseText); //double STRINGIFY
+                console.log(timeZoneData);
+                timeZoneData = JSON.parse(timeZoneData);//and Back again
+                timeZoneData = JSON.parse(timeZoneData);//and one last time to get the actual parsed info
+                console.log(timeZoneData);
+                document.getElementById('greeting').innerHTML += "You signed in at " + timeZoneData.formatted;
+            }
+        }
 
+        var url1 = "http://api.timezonedb.com/v2/get-time-zone?key=9E6K4SEAY5TL&format=json&by=zone&zone=" + timeZone;
+        timeRequest.open("GET", url1, true);
+        timeRequest.send();
+    }
   </script>
 </html>
