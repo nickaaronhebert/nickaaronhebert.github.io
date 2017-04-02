@@ -71,6 +71,12 @@
 
       <div id="welcomeScreen">
         <div id="userQuestions" style="text-align: left; padding: 20px; width: 90%">
+          Login in as:<br>
+          <select class="userInputs" id="usersList" onchange="loginUser()">
+            <option></option>
+          </select>
+          -- or -- <br>
+          New Account <br>
           First Name:<br>
           <input class="userInputs" id="fName" type="text" name="firstName"><br>
           Last Name:<br>
@@ -92,22 +98,24 @@
           </select>
         </div>
         
-        <div id="actions" style="padding-top:100px; width: 100% ">
+        <div id="actions" style="padding-top:0px; width: 100% ">
           <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px;" onclick="handleNewAccount()">Continue</button>
           <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px;" onclick="showScreen('launchScreen')">Back to Launch</button>
         </div>
       </div>
 
       <div id="timeRecordingScreen">
-        <div id="greeting"></div>
+        <div id="recordGreeting"></div>
         <div id="navActions">
-          <button id="userTypeButton" style="background-color: #00caff; float: left"></button>
-          <button id="logoutButton" style="background-color: #00caff; float: right">Log out</button>
+          <button id="userTypeButton" style="background-color: #00caff; float: left" onclick='showScreen("adminScreen")'>Employee Records</button>
+          <button id="logoutButton" style="background-color: #00caff; float: right" onclick="showScreen('launchScreen')">Log out</button>
         </div>
         <canvas id="timeClockCanvas"></canvas>
         <div id="clockActions">
           <button style="height: 75px; width: 90%; border-radius: 5px; font-size: 24px; background-color: #00caff; float: center" onclick="toggleStopWatch()" id="toggleStopWatch">Clock In</button>
+          <br>
         </div>
+        <div style="height:300px;overflow:auto;">
         <table>
           <thead>
             <tr>
@@ -119,8 +127,45 @@
           <tbody id="emplTimeRecords">
           </tbody>
         </table>
+        </div>
       </div>
-      
+
+      <div id="adminScreen">
+        <div id="adminGreeting"></div>
+        <div id="navActions">
+          <button id="userTypeButton" style="background-color: #00caff; float: left" onclick='showScreen("timeRecordingScreen")'>My Timesheet</button>
+          <button id="logoutButton" style="background-color: #00caff; float: right" onclick="showScreen('launchScreen')">Log out</button>
+          <br><br>
+          <div style="height:200px;overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Time Zone</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="emplTable">
+              </tbody>
+            </table>
+          </div>
+          <div style="height:200px;overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time In</th>
+                  <th>Time Out</th>
+                  <th>Total Time Worked</th>
+                </tr>
+              </thead>
+              <tbody id="emplTimeRecordsAdmin">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -180,6 +225,7 @@
       clearDOM();
       showScreen("launchScreen");
       if (!localStorage.getItem("emplTimeRecords")) { localStorage.setItem("emplTimeRecords", "{}")}
+      if (!localStorage.getItem("timeUsers")) { localStorage.setItem("timeUsers", "[]")}
     }
 
     function glowTime(x){ //Tyler
@@ -191,7 +237,7 @@
     }
 
     function clearDOM() {
-      var a = ["launchScreen", "welcomeScreen", "timeRecordingScreen"];
+      var a = ["launchScreen", "welcomeScreen", "timeRecordingScreen", "adminScreen"];
       a.forEach(function(element, index) {
         var x = document.getElementById(element);
         x.style.display = 'none';
@@ -207,23 +253,88 @@
           x.style.display = 'none';
       }
       if (screen == "timeRecordingScreen") {
-          getTimeZones();
-
-          displayTimeRecordingScreen();
+        getTimeZones();
+        displayTimeRecordingScreen();
       }
-      if (screen == 'welcomeScreen'){
-
+      else if (screen == 'welcomeScreen') {
+        displayWelcomeScreen();
       }
+      else if (screen == 'adminScreen'){
+        if (currUser.userType == "Administrator") {
+          displayAdminScreen();
+        }
+        else {
+          alert("This user is not an admin. You may not view other employee records."); 
+          showScreen("timeRecordingScreen");
+        }
+      }
+    }
+
+    function loginUser(user) {
+      var user = document.getElementById("usersList").value;
+      if (user != "") {
+        var users = JSON.parse(localStorage.getItem("timeUsers"));
+        for (var i = 0; i < users.length; i++)
+        {
+          if (users[i].firstName == user.split(" ")[0] && users[i].lastName == user.split(" ")[1] ) {
+            currUser = users[i];
+            showScreen("timeRecordingScreen");
+          }
+        }
+      }
+    }
+
+    function displayWelcomeScreen() {
+      document.getElementById('usersList').innerHTML = '';
+      var option = document.createElement("option");
+      document.getElementById("usersList").appendChild(option);
+      var users = JSON.parse(localStorage.getItem("timeUsers"));
+      for (var i = 0; i < users.length; i++)
+      {
+        var option = document.createElement("option");
+        option.innerHTML = users[i].firstName + " " + users[i].lastName;
+        document.getElementById("usersList").appendChild(option);
+      }
+
+    }
+
+    function displayGreetingMessage(element) {
+      document.getElementById(element).innerHTML = '';
+      var greeting = document.createElement("p");
+      var greetingText = document.createTextNode("Hello, " + currUser.firstName + " " + currUser.lastName + "-" + currUser.title);
+      greeting.appendChild(greetingText);
+      document.getElementById(element).appendChild(greetingText);
     }
 
     function displayTimeRecordingScreen() {
       drawTimeClock();
-      var greeting = document.createElement("p");
-      var greetingText = document.createTextNode("Hello, " + currUser.firstName + " " + currUser.lastName + "-" + currUser.title);
-      greeting.appendChild(greetingText);
-      document.getElementById('greeting').appendChild(greetingText);
-      document.getElementById('userTypeButton').innerHTML = currUser.userType == "Administrator" ? "View Employees" : "Basic User";
+      displayGreetingMessage("recordGreeting");
       showUserRecords();
+    }
+
+    function displayAdminScreen() {
+      displayGreetingMessage("adminGreeting");
+      showUsersTable();
+      return; 
+    }
+
+    function showUsersTable() {
+      document.getElementById('emplTable').innerHTML = "";
+      var table = document.getElementById('emplTable');
+      var employees = JSON.parse(localStorage.getItem("timeUsers"));
+      for (var i = 0; i < employees.length; i++) {
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        var cell0 = row.insertCell(0);
+        var cell1 = row.insertCell(1);
+        var cell2 = row.insertCell(2);
+        var cell3 = row.insertCell(3);
+        cell0.innerHTML = cell0.innerHTML + employees[i].firstName;
+        cell1.innerHTML = cell1.innerHTML + employees[i].lastName;
+        cell2.innerHTML = cell2.innerHTML + employees[i].timeZone;
+        cell3.innerHTML = "<button onclick='viewEmplRecordsAdmin(" + employees[i].emplId + ")'> View Records </button>"  ;
+      }
+      return;
     }
 
     function drawTimeClock(){//Tyler
@@ -235,6 +346,22 @@
         clock.stroke();
     }
 
+    function viewEmplRecordsAdmin(emplID) {
+      document.getElementById('emplTimeRecordsAdmin').innerHTML = "";
+      var table = document.getElementById('emplTimeRecordsAdmin');
+      var emplTimeRecords = getEmplTimeRecords(emplID);;
+      for (var i = 0; i < emplTimeRecords.length; i++) {
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        var cell0 = row.insertCell(0);
+        var cell1 = row.insertCell(1);
+        var cell2 = row.insertCell(2);
+        cell0.innerHTML = cell0.innerHTML + emplTimeRecords[i].startTimeString;
+        cell1.innerHTML = cell1.innerHTML + emplTimeRecords[i].endTimeString;
+        cell2.innerHTML = cell2.innerHTML + emplTimeRecords[i].timeDiff + " Hours";
+      }
+    }
+
     function showUserRecords() { //Nick
       document.getElementById('emplTimeRecords').innerHTML = "";
       var table = document.getElementById('emplTimeRecords');
@@ -244,8 +371,10 @@
         var row = table.insertRow(rowCount);
         var cell0 = row.insertCell(0);
         var cell1 = row.insertCell(1);
+        var cell2 = row.insertCell(2);
         cell0.innerHTML = cell0.innerHTML + emplTimeRecords[i].startTimeString;
         cell1.innerHTML = cell1.innerHTML + emplTimeRecords[i].endTimeString;
+        cell2.innerHTML = cell2.innerHTML + emplTimeRecords[i].timeDiff + " Hours";
       }
     }
 
@@ -271,6 +400,10 @@
         var newUser = new NonPrivilegedUser(firstName, lastName, title, userType, timeZone);
       }
       currUser = newUser;
+      var timeUsers = JSON.parse(localStorage.getItem("timeUsers"));
+      debugger;
+      timeUsers.push(currUser);
+      localStorage.setItem("timeUsers", JSON.stringify(timeUsers));
       showScreen('timeRecordingScreen');
     }
 
@@ -281,11 +414,15 @@
         document.getElementById("timeClockCanvas").className = "timeClockPulse"; //Tyler - just this line
       }
       else {
-        debugger;
         document.getElementById("timeClockCanvas").classList.remove('timeClockPulse'); //Tyler - just this line
         var timeObj = getTimeObj();
         currTimeRecord.endTime = timeObj["timestamp"];
         currTimeRecord.endTimeString = timeObj["formatted"];
+        var clockIn = new Date(currTimeRecord.startTime * 1000);
+        var clockOut = new Date(currTimeRecord.endTime * 1000);
+        var diffMs = (clockOut - clockIn);
+        var diffMins = ((((diffMs % 86400000) % 3600000) / 60000 )/ 60).toFixed(2);
+        currTimeRecord.timeDiff = diffMins;
         emplTimeRecords = getEmplTimeRecords(currUser.emplId);
         emplTimeRecords.push(currTimeRecord);
         allTimeRecords = JSON.parse(localStorage.getItem("emplTimeRecords"));
@@ -326,8 +463,6 @@
         document.getElementById("errorDiv").innerHTML += "An error occured while trying to retrieve the resource: "
          + err.description;
       }
-
-      
     }
 
   </script>
