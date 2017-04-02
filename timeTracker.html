@@ -63,7 +63,6 @@
 <div>    
   <div>
     <div style="text-align: center; background-color: #78909c; width: 400px; height: 600px">
-      
       <div id="launchScreen">
         <h2>Tyler and Nick's Time Tracker</h2>
         <div>
@@ -272,7 +271,7 @@
           x.style.display = 'none';
       }
       if (screen == "timeRecordingScreen") {
-        getTimeZones();
+        getTimeZone();
         displayTimeRecordingScreen();
       }
       else if (screen == 'welcomeScreen') {
@@ -520,7 +519,7 @@
     }
     
     function getTimeZone() { //Tyler
-        timeZone = document.getElementById('timeZone').value;
+        timeZone = currUser.timeZone;
         var timeRequest = new XMLHttpRequest();
         timeRequest.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200){
@@ -529,7 +528,7 @@
                 timeZoneData = JSON.parse(timeZoneData);//and Back again
                 timeZoneData = JSON.parse(timeZoneData);//and one last time to get the actual parsed info
                 console.log(timeZoneData);
-                document.getElementById('greeting').innerHTML += "You signed in at " + timeZoneData.formatted;
+                document.getElementById('recordGreeting').innerHTML += "You signed in at " + timeZoneData.formatted;
             }
         }
 
