@@ -28,7 +28,7 @@
            }
     }
 
-    #myCanvas:hover {
+    #myCanvasShape:hover {
         width: 100px;
         height: 100px;
         background-color: green;
@@ -81,6 +81,7 @@
 
     #washington_row {
       transition: background-color 5s;
+
     }
 
     .transform {
@@ -95,6 +96,10 @@
       background-color: #45CEE0;
       height: 200px;
       width: 200px;
+    }
+
+    .wrongState {
+      height: 50px;
     }
 
     
@@ -114,12 +119,14 @@
 
     function drawWords(words) {
       var words = document.getElementById('wordSuggestion').value;
-      var canvas = document.getElementById("myCanvas");
+      var canvas = document.getElementById("myCanvasShape");
 
       var canvasContext = canvas.getContext("2d");
       canvasContext.clearRect(0, 0, canvas.width, canvas.height);
       canvasContext.font = "italic 40pt Calibri";
-      canvasContext.fillText(words,10,50);
+      var heightStart = Math.floor(Math.random() * 20) * 10;
+      var widthStart = Math.floor(Math.random() * 20) * 10;
+      canvasContext.fillText(words,heightStart,widthStart);
     }
 
     function drawWordsWrong(words) {
@@ -132,9 +139,11 @@
 
     function colorRowRed(state) {
       var idField = state + "_row";
+      var lineField = state + "_row_line";
       var stateRow = document.getElementById(idField);
       stateRow.style.backgroundColor = "red";
-      stateRow.style.height = "20px";
+      stateRow.setAttribute('height', '20px');
+
     }
 
     function colorRowGreen(state) {
@@ -164,6 +173,7 @@
       shrinkShape("square");
       shrinkShape("circle");
       shrinkShape("triangle");
+      shrinkShape("eraser");
       enlargeShape(shape);
       if (shape == "circle") {
         var circumference = (Math.floor(Math.random() * 9) + 1 ) * 10;
@@ -181,7 +191,7 @@
         canvasContext.stroke();
         return;
       }
-      else {
+      else if (shape == "triangle") {
         var circumference = (Math.floor(Math.random() * 40) + 1 ) * 10;
         var startLocation = (Math.floor(Math.random() * 40) + 1 ) * 10;
         canvasContext.beginPath();
@@ -191,6 +201,11 @@
         canvasContext.closePath();
         canvasContext.stroke();
         return;
+      }
+      else {
+        document.getElementById("canvasDiv").innerHTML =  '';
+        document.getElementById("canvasDiv").innerHTML =  '<canvas id="myCanvasShape" width="300" height="300" style="border:1px solid #d3d3d3;">';
+
       }
     }
 
@@ -230,8 +245,8 @@
         <source src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" type="video/mp4">
       </video>
       <br>
-      <button type="button" class="btn btn-info btn-block" onclick="fullscreenVideo();">Make it full screen!</button>
-      <button type="button" class="btn btn-info btn-block" onclick="smallscreenVideo();">Make it small!</button>
+      <button type="button" onclick="fullscreenVideo();">Make it full screen!</button>
+      <button type="button" onclick="smallscreenVideo();">Make it small!</button>
       
 
       <h5>Audio - Nice Classical Music Song</h5>
@@ -245,24 +260,18 @@
        <p>Looks like this browser does not support audio tags.</p>
       </audio>
 
-      <h4>Types some words and then let's draw them on the canvas</h4>
-      <h4>You probably need a bigger canvas, huh?</h4>
-
-      Type Here:    <input type="" id="wordSuggestion" name="">
-      <canvas id="myCanvas" width="300" height="300" style="border:1px solid #d3d3d3;">
-      Your browser does not support the HTML5 canvas tag.</canvas>
-      <br>
-      <button type="button" onclick="drawWords();">Draw in the canvas!</button>
-
-
       <h4>Click on a shape to draw it.</h4>
       <img src="https://i.ytimg.com/vi/rb8Y38eilRM/maxresdefault.jpg" id="square" onclick="drawShape('square')" style="height: 100px; width: 100px;">
       <img src="https://i.ytimg.com/vi/LlXnXf6FSq8/maxresdefault.jpg" id="circle" onclick="drawShape('circle')" style="height: 100px; width: 100px;">
       <img src="https://i.ytimg.com/vi/2wFMdKb0cz0/maxresdefault.jpg" id="triangle" onclick="drawShape('triangle')" style="height: 100px; width: 100px;">
-      <div style="width: 900px;">
+      <img src="http://www.insetfair.com/wp-content/uploads/2012/09/ISFG00286_Eraser_Flash_Graphics.jpg" id="eraser" onclick="drawShape('eraser')" style="height: 100px; width: 100px;">
+      <div id="canvasDiv" style="width: 900px;">
           <canvas id="myCanvasShape" width="300" height="300" style="border:1px solid #d3d3d3;">
         Your browser does not support the HTML5 canvas tag.</canvas>
       </div>
+      <h4>Types some words and then let's draw them on the canvas</h4>
+      Type Here:    <input type="" id="wordSuggestion" name="">
+      <button type="button" onclick="drawWords();">Draw in the canvas!</button>
       <br>
       
       <table>
@@ -292,7 +301,7 @@
           </tr>
           <tr id="washington_row">
             <td>Washington</td>
-            <td><img style="height: 300px; width: 300px;" src="https://s-media-cache-ak0.pinimg.com/736x/5c/64/d0/5c64d073284d52492858162d33fa6838.jpg"></td>
+            <td><img style="max-height: 300px;" src="https://s-media-cache-ak0.pinimg.com/736x/5c/64/d0/5c64d073284d52492858162d33fa6838.jpg"></td>
             <td>
               <button type="button" onclick="colorRowRed('washington');">Not my state! </button>
               <button type="button" onclick="colorRowGreen('washington');">This is my state! </button>

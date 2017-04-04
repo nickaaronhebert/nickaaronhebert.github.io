@@ -230,7 +230,9 @@
     function Admin(fName, lName, title, userType, timeZone) { //Nick 
       User.call(this, fName, lName, title, userType, timeZone );
       this.getEmployeeTimeRecords = function(emplId) {
-        console.log("Getting other persons records");
+        var emplTimeRecords = JSON.parse(localStorage.getItem("emplTimeRecords"));
+        if (emplTimeRecords[emplId]) {return emplTimeRecords[emplId];}
+        return [];
       };
     }
     Admin.prototype = new User();
@@ -421,7 +423,6 @@
       }
       currUser = newUser;
       var timeUsers = JSON.parse(localStorage.getItem("timeUsers"));
-      debugger;
       timeUsers.push(currUser);
       localStorage.setItem("timeUsers", JSON.stringify(timeUsers));
       showScreen('timeRecordingScreen');
